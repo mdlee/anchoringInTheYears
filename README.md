@@ -15,4 +15,8 @@ The csv file `anchorYearsDecontaminatedLong.csv` contains the behavioral data. I
 
 # Code
 
-The anchoring index analyses are produced by running the  MATLAB script `anchoringIndex.m`, specifying the question numbers to analyze in the vector `questionList`. This script uses the JAGS graphical model defined in `anchoringIndex_jags.txt`. It uses the [Trinity](https://github.com/joachimvandekerckhove/trinity) package to connect MATLAB and JAGS via the `callBayes` function.
+The anchoring index analyses are produced by running the  MATLAB script `anchoringIndex.m`, specifying the question numbers to analyze in the vector `questionList`. This script uses the JAGS graphical model defined in `anchoringIndex_jags.txt`.
+
+The debiasing model analyses are produced by running the  MATLAB script `debiasing.m`, which uses the JAGS graphical model defined in `debiasing_jags.txt`.
+
+Both MATLAB scripts use the [Trinity](https://github.com/joachimvandekerckhove/trinity) package to connect MATLAB and JAGS via the `callBayes` function.
