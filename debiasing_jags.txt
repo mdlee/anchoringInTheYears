@@ -1,0 +1,22 @@
+# Debiasing model
+data{
+  lo = min(y)
+  hi = max(y)
+  T = length(y)
+  nQuestions = max(question)
+  nParticipants = max(participant)
+}
+model{
+  for (q in 1:nQuestions){
+    mu[q] ~ dunif(lo, hi)
+  }
+  for (p in 1:nParticipants){
+    sigma[p] ~ dunif(0.01, hi-lo)
+    alpha[p] ~ dnorm(0.3, 1/0.5^2)
+  }
+  for (t in 1:T){
+    muPrime[t] ~ dnorm(mu[question[t]], 1/sigma[participant[t]]^2)
+    y[t] ~ dnorm(ifelse(equals(version[t], 3), muPrime[t],
+    alpha[participant[t]]*anchor[t]+(1-alpha[participant[t]])*muPrime[t]), 1)
+  }
+}
