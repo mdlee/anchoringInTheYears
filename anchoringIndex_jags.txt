@@ -1,0 +1,27 @@
+# Anchoring Index
+data{
+  lo = min(min(yH), min(yL))
+  hi = max(max(yH), max(yL))
+  mn = mean(c(mean(yH), mean(yL)))
+  nH = length(yH)
+  nL = length(yL)
+}
+model{
+  mu ~ dnorm(mn, 1/(hi-lo)^2)
+  A ~ dnorm(0.3, 1/0.5^2)
+  delta = A*(hi - lo)
+  # high anchor
+  muH = mu + delta/2
+  sigmaH ~ dunif(0.01, hi-lo)
+  for (i in 1:nH){
+    yH[i] ~ dnorm(muH, 1/sigmaH^2)T(0, 2024)
+  }
+  # low anchor
+  muL = mu - delta/2
+  sigmaL ~ dunif(0.01, hi-lo)
+  for (i in 1:nL){
+    yL[i] ~ dnorm(muL, 1/sigmaL^2)T(0, 2024)
+  }
+  # prior
+  Aprior ~ dnorm(0.3, 1/0.5^2)
+}
