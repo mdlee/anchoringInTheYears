@@ -20,3 +20,7 @@ The anchoring index analyses are produced by running the  MATLAB script `anchori
 The debiasing model analyses are produced by running the  MATLAB script `debiasing.m`, which uses the JAGS graphical model defined in `debiasing_jags.txt`.
 
 Both MATLAB scripts use the [Trinity](https://github.com/joachimvandekerckhove/trinity) package to connect MATLAB and JAGS via the `callBayes` function.
+
+# Results
+
+Results graphs for all eleven questions are in the `results` subfolder.
