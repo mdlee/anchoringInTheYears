@@ -9,7 +9,7 @@ data{
 model{
   mu ~ dnorm(mn, 1/(hi-lo)^2)
   A ~ dnorm(0.3, 1/0.5^2)
-  delta = A*(hi - lo)
+  delta = A*(anchorHi - anchorLo)
   # high anchor
   muH = mu + delta/2
   sigmaH ~ dunif(0.01, hi-lo)
