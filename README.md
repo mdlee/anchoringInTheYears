@@ -23,4 +23,4 @@ Both MATLAB scripts use the [Trinity](https://github.com/joachimvandekerckhove/t
 
 # Results
 
-Results graphs for all eleven questions are in the `results` subfolder.
+Results graphs for all eleven questions are in the [results](https://github.com/mdlee/anchoringInTheYears/tree/main/results) subfolder.
