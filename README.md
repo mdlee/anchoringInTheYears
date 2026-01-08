@@ -1,6 +1,6 @@
 Code and data for the paper:
 
-Lee, M.D., & Dang, A. (2025). Comparing diversity and debiasing approaches to the wisdom of the crowd in anchored estimation.
+Lee, M.D., & Dang, A. (2025). Comparing diversity and debiasing approaches to the wisdom of the crowd.
 
 # Data
 
