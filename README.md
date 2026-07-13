@@ -29,4 +29,4 @@ Both MATLAB scripts use the [Trinity](https://github.com/joachimvandekerckhove/t
 
 # Results
 
-Results graphs for all eleven questions are in the [results](https://github.com/mdlee/anchoringInTheYears/tree/main/results) subfolder.
+Results graphs for all 11 questions in the event years data and 30 questions in the Barrera-Lemarchand (2024, Experiment 2) data are in the [results](https://github.com/mdlee/anchoringInTheYears/tree/main/results) subfolder.
