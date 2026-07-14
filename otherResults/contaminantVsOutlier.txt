@@ -1,0 +1,129 @@
+========== outlierRuleComparison ==========
+Parse rule: mean+/-3SD per question; second pass on Q8,Q11
+IQR rule:   outside [Q1-1.5*IQR, Q3+1.5*IQR] per question
+Raw observations (pre-parse): 2134
+
+Per-question outlier counts (grouping = question, all conditions pooled):
+Question                 n Parse   IQR  Both Ponly Ionly        IQR_lo       IQR_hi
+Thriller               194     1     1     1     0     0        1962.0       2010.0
+Internet               194     5    12     5     0     7        1952.5       2012.5
+Disneyland             194     1     1     1     0     0        1911.0       2015.0
+Great Depression       194     1    14     1     0    13        1890.0       1970.0
+iPhone                 194     2    12     2     0    10        1995.5       2015.5
+Firefox                194     3     4     3     0     1        1967.5       2027.5
+Youtube                194     4     4     4     0     0        1991.0       2015.0
+McDonald's             194     3     4     3     0     1        1907.5       2007.5
+Revolutionary War      194     5    24     5     0    19        1702.5       1874.5
+Reagan                 194     2     5     2     0     3        1950.0       2014.0
+Pixar                  194     4    11     4     0     7        1969.0       2017.0
+
+Overall:
+  Raw n              = 2134
+  Parse outliers     = 31  (kept 2103)
+  IQR outliers       = 92  (kept 2042)
+  Both methods       = 31
+  Parse only         = 0
+  IQR only           = 61
+  Cleaned mat n      = 2103 (anchorYearsData.mat)
+  Agreement on flag  = 2073 / 2134 (97.1%)
+
+IQR-only outliers (flagged by IQR, not by 3SD parse):
+  Q2  Internet            est=1950  group=1  person=81
+  Q2  Internet            est=1950  group=1  person=109
+  Q2  Internet            est=1950  group=1  person=120
+  Q2  Internet            est=1950  group=1  person=127
+  Q2  Internet            est=1945  group=1  person=137
+  Q2  Internet            est=1940  group=1  person=142
+  Q2  Internet            est=1950  group=3  person=168
+  Q4  Great Depression    est=2008  group=2  person=13
+  Q4  Great Depression    est=1980  group=2  person=32
+  Q4  Great Depression    est=1975  group=2  person=39
+  Q4  Great Depression    est=1980  group=2  person=49
+  Q4  Great Depression    est=1980  group=3  person=152
+  Q4  Great Depression    est=2000  group=3  person=156
+  Q4  Great Depression    est=1860  group=3  person=165
+  Q4  Great Depression    est=1975  group=3  person=167
+  Q4  Great Depression    est=1986  group=3  person=173
+  Q4  Great Depression    est=1985  group=3  person=178
+  Q4  Great Depression    est=1975  group=3  person=181
+  Q4  Great Depression    est=1980  group=3  person=185
+  Q4  Great Depression    est=1987  group=3  person=194
+  Q5  iPhone              est=1995  group=1  person=7
+  Q5  iPhone              est=1993  group=1  person=8
+  Q5  iPhone              est=1995  group=1  person=9
+  Q5  iPhone              est=1995  group=1  person=12
+  Q5  iPhone              est=1995  group=1  person=24
+  Q5  iPhone              est=1991  group=1  person=28
+  Q5  iPhone              est=1993  group=1  person=34
+  Q5  iPhone              est=1995  group=1  person=64
+  Q5  iPhone              est=1994  group=1  person=66
+  Q5  iPhone              est=1990  group=3  person=173
+  Q6  Firefox             est=1963  group=1  person=80
+  Q8  McDonald's          est=1890  group=1  person=137
+  Q9  Revolutionary War   est=1700  group=1  person=15
+  Q9  Revolutionary War   est=1920  group=1  person=16
+  Q9  Revolutionary War   est=1630  group=1  person=57
+  Q9  Revolutionary War   est=1880  group=2  person=87
+  Q9  Revolutionary War   est=1700  group=2  person=101
+  Q9  Revolutionary War   est=1888  group=2  person=107
+  Q9  Revolutionary War   est=1902  group=2  person=109
+  Q9  Revolutionary War   est=1660  group=2  person=111
+  Q9  Revolutionary War   est=1900  group=2  person=140
+  Q9  Revolutionary War   est=1876  group=3  person=147
+  Q9  Revolutionary War   est=1956  group=3  person=156
+  Q9  Revolutionary War   est=1920  group=3  person=163
+  Q9  Revolutionary War   est=1970  group=3  person=167
+  Q9  Revolutionary War   est=1890  group=3  person=178
+  Q9  Revolutionary War   est=1700  group=3  person=180
+  Q9  Revolutionary War   est=1960  group=3  person=183
+  Q9  Revolutionary War   est=1940  group=3  person=185
+  Q9  Revolutionary War   est=1940  group=3  person=186
+  Q9  Revolutionary War   est=1953  group=3  person=192
+  Q10 Reagan              est=1942  group=1  person=80
+  Q10 Reagan              est=1940  group=1  person=95
+  Q10 Reagan              est=1940  group=1  person=125
+  Q11 Pixar               est=1960  group=1  person=36
+  Q11 Pixar               est=1960  group=1  person=53
+  Q11 Pixar               est=1950  group=1  person=64
+  Q11 Pixar               est=1960  group=1  person=72
+  Q11 Pixar               est=1950  group=2  person=113
+  Q11 Pixar               est=1960  group=3  person=178
+  Q11 Pixar               est=1967  group=3  person=184
+
+Mean estimate by question x group (raw / after parse keep / after IQR keep):
+Question             Grp       Raw    Parse      IQR
+Thriller             1      1984.8   1984.8   1984.8   (n=73/73/73)
+Thriller             2      1987.7   1988.1   1988.1   (n=73/72/72)
+Thriller             3      1989.5   1989.5   1989.5   (n=48/48/48)
+Internet             1      1975.9   1978.4   1981.3   (n=73/71/65)
+Internet             2      1985.5   1985.5   1985.5   (n=73/73/73)
+Internet             3      1976.5   1982.0   1982.8   (n=48/45/44)
+Disneyland           1      1951.0   1951.0   1951.0   (n=73/73/73)
+Disneyland           2      1968.4   1968.4   1968.4   (n=73/73/73)
+Disneyland           3      1970.7   1973.7   1973.7   (n=48/47/47)
+Great Depression     1      1927.4   1927.4   1927.4   (n=73/73/73)
+Great Depression     2      1932.4   1936.1   1933.2   (n=73/72/68)
+Great Depression     3      1937.7   1937.7   1930.3   (n=48/48/39)
+iPhone               1      2002.5   2003.3   2004.7   (n=73/71/62)
+iPhone               2      2006.8   2006.8   2006.8   (n=73/73/73)
+iPhone               3      2005.4   2005.4   2005.7   (n=48/48/47)
+Firefox              1      1990.3   1991.3   1991.7   (n=73/71/70)
+Firefox              2      2005.1   2005.1   2005.1   (n=73/73/73)
+Firefox              3      1996.7   1997.7   1997.7   (n=48/47/47)
+Youtube              1      2001.6   2002.1   2002.1   (n=73/71/71)
+Youtube              2      2004.8   2004.8   2004.8   (n=73/73/73)
+Youtube              3      2003.5   2004.2   2004.2   (n=48/46/46)
+McDonald's           1      1948.2   1948.2   1949.0   (n=73/73/72)
+McDonald's           2      1953.9   1966.0   1966.0   (n=73/71/71)
+McDonald's           3      1959.4   1961.7   1961.7   (n=48/47/47)
+Revolutionary War    1      1769.3   1768.9   1769.8   (n=73/69/66)
+Revolutionary War    2      1797.7   1795.1   1792.7   (n=73/72/66)
+Revolutionary War    3      1804.0   1804.0   1776.0   (n=48/48/38)
+Reagan               1      1974.6   1975.4   1976.9   (n=73/72/69)
+Reagan               2      1987.4   1987.4   1987.4   (n=73/73/73)
+Reagan               3      1980.6   1981.7   1981.7   (n=48/47/47)
+Pixar                1      1989.1   1989.1   1990.9   (n=73/73/69)
+Pixar                2      1994.9   1994.9   1995.5   (n=73/73/72)
+Pixar                3      1949.0   1992.0   1993.3   (n=48/44/42)
+
+========== end outlierRuleComparison ==========
