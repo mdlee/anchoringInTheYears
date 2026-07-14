@@ -5,6 +5,7 @@ Lee, M.D., & Dang, A. (2026). Comparing diversity and debiasing approaches to th
 # Data
 
 The behavioral data for the event years experiment are in the csv file `anchorYearsDecontaminatedLong.csv`. It is in a long format, with the following columns
+
 - `participant`: a unique participant ID from 1 to 194
 - `question`: a unique question number from 1 to 11 (1 = 'Thriller', 2 = 'Internet', 3 = 'Disneyland', 4 = 'Great Depression', 5 = 'iPhone', 6 = 'Firefox', 7 = 'Youtube', 8 = 'McDonalds', 9 = 'Revolutionary War', 10 = 'Reagan', 11 = 'Pixar')
 - `version`: a number from 1 to 3 indicating which version of the experiment the participant completed (1 = one of the anchor versions, 2 = the other anchor version, 3 = the no anchor version)
@@ -29,4 +30,8 @@ Both MATLAB scripts use the [Trinity](https://github.com/joachimvandekerckhove/t
 
 # Results
 
-Results graphs for all 11 questions in the event years data and 30 questions in the Barrera-Lemarchand (2024, Experiment 2) data are in the [results](https://github.com/mdlee/anchoringInTheYears/tree/main/results) subfolder.
+Results graphs for all 11 questions in the event years data and 30 questions in the Barrera-Lemarchand (2024, Experiment 2) data are in the [questionResults](https://github.com/mdlee/anchoringInTheYears/tree/main/questionResults) subfolder.
+
+In the [otherResults](https://github.com/mdlee/anchoringInTheYears/tree/main/otherResults) subfolder are additional results
+
+- the correlation between inferred expertise and inferred anchoring for both data sets
