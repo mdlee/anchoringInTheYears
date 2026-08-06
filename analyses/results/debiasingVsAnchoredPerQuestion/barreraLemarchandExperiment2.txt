@@ -1,0 +1,47 @@
+Barrera-Lemarchand Exp 2: debiasing model vs averaged anchored crowd
+Absolute error |estimate - truth| per question.
+Anchored crowd = mean of low- and high-anchor estimates for that question.
+Debiasing model = posterior mean of mu_q.
+MCMC: /home/mdlee/Dropbox/GitHub/anchoringInTheYears/models/debiasing/storage/debiasing_barreraEtAlExperiment2_jags.mat
+
+Q    label                           truth    crowdHL    modelMu    |errHL|    |errMu| modelWin
+--------------------------------------------------------------------------------------------------------
+1    No religion                     12.20      27.09      24.18      14.89      11.98        1
+2    Overweight                      52.00      32.36      31.01      19.64      20.99        0
+3    Women in congress               39.00      28.12      27.58      10.88      11.42        0
+4    Age 14 or less                  24.90      27.44      23.64       2.54       1.26        1
+5    Homosexuality immoral           27.00      32.98      31.83       5.98       4.83        1
+6    Abortion immoral                56.00      51.36      51.27       4.64       4.73        0
+7    Good health                     75.00      57.70      60.02      17.30      14.98        1
+8    Male suicide                    15.30      18.16      13.32       2.86       1.98        1
+9    Facebook                        60.00      68.06      71.44       8.06      11.44        0
+10   Fake news                       72.00      66.46      67.89       5.54       4.11        1
+11   School attendance               88.85      73.72      74.46      15.13      14.39        1
+12   No toilet                       15.20      26.95      26.19      11.75      10.99        1
+13   Never had child                 30.26      37.10      34.51       6.84       4.25        1
+14   Has or seeks job                70.57      59.98      62.52      10.59       8.05        1
+15   Health coverage                 63.90      49.95      52.14      13.95      11.76        1
+16   Women with jobs                 50.20      55.18      54.65       4.98       4.45        1
+17   Internet access                 73.00      66.51      69.25       6.49       3.75        1
+18   Unmarried sex immoral           22.00      23.82      17.65       1.82       4.35        0
+19   Own housing                     72.00      39.64      37.55      32.36      34.45        0
+20   Smartphone                      48.00      69.67      71.63      21.67      23.63        0
+21   Trustworthy                     19.20      37.40      38.03      18.20      18.83        0
+22   Vaccines autism                 10.00      11.32       9.72       1.32       0.28        1
+23   Richest 1 pct wealth            44.00      46.78      51.92       2.78       7.92        0
+24   High school                     20.11      59.06      58.98      38.95      38.87        1
+25   Born abroad 80+                 11.76      27.60      27.11      15.84      15.35        1
+26   Not interested politics         30.70      35.71      37.06       5.01       6.36        0
+27   Santa Fe under 65               88.20      57.70      59.08      30.50      29.12        1
+28   Single                          33.52      43.13      42.21       9.61       8.69        1
+29   Not apartment                   88.10      50.24      50.84      37.86      37.26        1
+30   Work and study                  19.21      41.15      38.64      21.94      19.43        1
+
+Summary
+  Questions:              30
+  Model better (abs err): 20 / 30
+  Ties / worse:          10
+  Anchored-crowd RMSE:    16.9028
+  Debiasing-model RMSE:   16.7126
+
+Claim check: NO — model not better on question(s): [2 3 6 9 18 19 20 21 23 26]
