@@ -43,5 +43,3 @@ Summary
   Ties / worse:          10
   Anchored-crowd RMSE:    16.9028
   Debiasing-model RMSE:   16.7126
-
-Claim check: NO — model not better on question(s): [2 3 6 9 18 19 20 21 23 26]
