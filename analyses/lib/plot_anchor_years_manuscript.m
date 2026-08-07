@@ -15,6 +15,7 @@ if nargin < 4 || isempty(analysisList)
         'expertiseVsAnchoring'
         'outlierRuleComparison'
         'debiasingVsAnchoredPerQuestion'
+        'constrainedDebiasing'
         };
 end
 if nargin < 5 || isempty(fineTune)
@@ -75,6 +76,9 @@ for analysisIdx = 1:numel(analysisList)
 
         case 'debiasingVsAnchoredPerQuestion'
             report_debiasing_vs_anchored_per_question(repoRoot, storageDirs, 'anchorYears');
+
+        case 'constrainedDebiasing'
+            report_constrained_debiasing(repoRoot, storageDirs, 'anchorYears');
 
         otherwise
             warning('Unknown or inapplicable analysis for anchorYears: %s', analysisName);

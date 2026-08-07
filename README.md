@@ -25,7 +25,8 @@ anchoringInTheYears/
 │       ├── expertiseVsAnchoring/         # additional (not in paper)
 │       ├── outlierRuleComparison/        # additional (not in paper)
 │       │   └── contaminantVsOutlier.txt
-│       └── debiasingVsAnchoredPerQuestion/  # per-question model vs anchored crowd
+│       ├── debiasingVsAnchoredPerQuestion/  # per-question model vs anchored crowd
+│       └── constrainedDebiasing/            # expertise-only / anchoring-only / anchored-only
 ├── manuscript/               # Local LaTeX sources (gitignored)
 └── README.md
 ```

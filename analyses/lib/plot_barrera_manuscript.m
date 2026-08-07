@@ -12,6 +12,7 @@ if nargin < 4 || isempty(analysisList)
         'performance'
         'expertiseVsAnchoring'
         'debiasingVsAnchoredPerQuestion'
+        'constrainedDebiasing'
         };
 end
 if nargin < 5 || isempty(fineTune)
@@ -64,6 +65,9 @@ for analysisIdx = 1:numel(analysisList)
 
         case 'debiasingVsAnchoredPerQuestion'
             report_debiasing_vs_anchored_per_question(repoRoot, storageDirs, 'barrera');
+
+        case 'constrainedDebiasing'
+            report_constrained_debiasing(repoRoot, storageDirs, 'barrera');
 
         case {'anchoringIndex', 'debiasingModel', 'outlierRuleComparison'}
             fprintf('  (skipping %s for barrera — not applicable)\n', analysisName);

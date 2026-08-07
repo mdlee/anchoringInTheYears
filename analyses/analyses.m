@@ -54,15 +54,18 @@ dataList = {
 %   expertiseVsAnchoring    — both (additional / not in paper)
 %   outlierRuleComparison   — anchorYears only (additional / not in paper)
 %   debiasingVsAnchoredPerQuestion — both; text report of per-question accuracy
+%   constrainedDebiasing — both; text report of expertise-only / anchoring-only /
+%       full / full-anchored-only RMSE vs crowd averages and full model
 analysisList = {
    % 'diversityPredictionTheorem'
    % 'anchoringIndex'
    % 'allQanchoring'
-   'performance'
+   % 'performance'
    % 'debiasingModel'
    % 'expertiseVsAnchoring'
    % 'outlierRuleComparison'
    % 'debiasingVsAnchoredPerQuestion'
+   'constrainedDebiasing'
    };
 
 %% Draw
