@@ -4,7 +4,7 @@ Code and data for:
 
 > Lee, M.D., & Dang, A. (2026). Comparing diversity and debiasing approaches to the wisdom of the crowd.
 
-This repository supports the event-years anchoring experiment and a reanalysis of Experiment 2 from Barrera-Lemarchand et al. (2024). It contains long-format behavioral data, JAGS/MATLAB model scripts, result-generation code for the manuscript, and additional diagnostic outputs.
+This repository supports the event-years anchoring experiment and a reanalysis of Experiment 2 from Barrera-Lemarchand et al. (2024). It contains long-format behavioral data, JAGS/MATLAB model scripts, result-generation code, and additional diagnostic outputs.
 
 ## Repository layout
 
@@ -22,16 +22,15 @@ anchoringInTheYears/
 │       ├── anchoringIndex/               # prior/posterior + forest plots
 │       ├── performance/
 │       ├── debiasingModel/
-│       ├── expertiseVsAnchoring/         # additional (not in paper)
-│       ├── outlierRuleComparison/        # additional (not in paper)
+│       ├── expertiseVsAnchoring/
+│       ├── outlierRuleComparison/
 │       │   └── contaminantVsOutlier.txt
 │       ├── debiasingVsAnchoredPerQuestion/  # per-question model vs anchored crowd
 │       └── constrainedDebiasing/            # expertise-only / anchoring-only / anchored-only
-├── manuscript/               # Local LaTeX sources (gitignored)
 └── README.md
 ```
 
-Each figure-producing analysis writes into `analyses/results/<analysisName>/{png,eps}/`. Non-figure artifacts (e.g. `contaminantVsOutlier.txt`) sit beside those folders under the same analysis name. Model `storage/` directories are gitignored.
+Each figure-producing analysis writes into `analyses/results/<analysisName>/{png,eps}/`. Non-figure artifacts (e.g. `contaminantVsOutlier.txt`) sit beside those folders under the same analysis name.
 
 ## Data
 
@@ -79,7 +78,7 @@ Both model scripts use [Trinity](https://github.com/joachimvandekerckhove/trinit
 
 Priors are scaled from the observed min/max/mean of the estimates for each question.
 
-### Debiasing model — `models/debipt (for asing/`
+### Debiasing model — `models/debiasing/`
 
 - Script: `debiasing.m`
 - JAGS: `debiasing_jags.txt`
@@ -108,6 +107,7 @@ analysisList = {
    'expertiseVsAnchoring'
    'outlierRuleComparison'
    'debiasingVsAnchoredPerQuestion'
+   'constrainedDebiasing'
    };
 ```
 
@@ -122,23 +122,22 @@ Font sizes and related styling live in the `%% Fine tune` block at the top of `a
 | `allQanchoring` | `anchoringIndex/{png,eps}/` | Forest plots of anchoring indices (same folder) |
 | `performance` | `performance/{png,eps}/` | Crowd / model RMSE comparison |
 | `debiasingModel` | `debiasingModel/{png,eps}/` | Debiasing schematic |
-| `expertiseVsAnchoring` | `expertiseVsAnchoring/{png,eps}/` | Additional (not in paper) |
+| `expertiseVsAnchoring` | `expertiseVsAnchoring/{png,eps}/` | Inferred expertise vs anchoring |
 | `outlierRuleComparison` | `outlierRuleComparison/` | Text report + optional bar chart; event years only |
-| `debiasingVsAnchoredPerQuestion` | `debiasingVsAnchoredPerQuestion/` | Text report: per-question |err| model vs anchored crowd |
+| `debiasingVsAnchoredPerQuestion` | `debiasingVsAnchoredPerQuestion/` | Text report: per-question \|err\| model vs anchored crowd |
+| `constrainedDebiasing` | `constrainedDebiasing/` | Text report: expertise-only / anchoring-only / anchored-only RMSE |
 
 `outlierRuleComparison` rebuilds raw long data from `anchoring140JW2024.mat` and compares the parse rule (mean ± 3 SD, second pass on McDonald's and Pixar) with classic 1.5 × IQR fences. Report: `contaminantVsOutlier.txt`.
 
-`debiasingVsAnchoredPerQuestion` checks the manuscript claim that the debiasing model beats the averaged anchored crowd on every event-years question (and reports the same for Barrera Exp 2). Reports: `anchorYears.txt`, `barreraLemarchandExperiment2.txt`.
+`debiasingVsAnchoredPerQuestion` compares the debiasing-model crowd estimate to the averaged anchored crowd on each question for event years and Barrera Exp 2. Reports: `anchorYears.txt`, `barreraLemarchandExperiment2.txt`.
+
+`constrainedDebiasing` compares full, expertise-only (`alpha=0`), anchoring-only (common `sigma`), and full-model-on-anchored-only fits against crowd averages. Reports: `anchorYears.txt`, `barreraLemarchandExperiment2.txt`. Anchored-only fits can be produced with `analyses/lib/fit_anchored_only_debiasing.m`.
 
 ### Dependencies for `analyses.m`
 
 - MATLAB with Trinity / JAGS sample mats available under model or analyses `storage/` (see `analyses/lib/find_mcmc_storage.m`)
 - Helpers `setFigure`, `moveAxis`, `Raxes` on the MATLAB path
 - Trinity `codatable` for summarizing MCMC chains
-
-## Manuscript
-
-`manuscript/` holds the working LaTeX sources (including `anchoringYears_R1_1.tex`). It is gitignored. Figure includes point at `../analyses/results/<analysis>/eps/...`.
 
 ## License / citation
 
