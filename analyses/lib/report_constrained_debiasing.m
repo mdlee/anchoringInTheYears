@@ -2,8 +2,8 @@ function report_constrained_debiasing(repoRoot, storageDirs, dataTag)
 %REPORT_CONSTRAINED_DEBIASING Compare full / expertise-only / anchoring-only models.
 % Also reports the full model fit using anchored individuals only.
 %
-% Performance metric matches the manuscript performance figure: RMSE of the
-% crowd/model estimate vector across questions vs ground truth.
+% Performance metric: RMSE of the crowd/model estimate vector across
+% questions vs ground truth.
 %
 % Writes:
 %   analyses/results/constrainedDebiasing/<dataTag>.txt
@@ -66,6 +66,28 @@ switch dataTag
         noAnchorGroupLong = 3;
         anchoredGroupLong = [1 2];
 
+    case 'percentageEstimationF2025'
+        load(fullfile(dataDir, 'percentageEstimationF2025.mat'), 'd');
+        if ~isfield(d, 'questionLabels') || numel(d.questionLabels) < d.nQuestions
+            d.questionLabels = f2025_question_labels();
+        end
+        fileStem = 'percentageEstimationF2025';
+        titleLine = 'COGS140J F2025 percentageEstimation: constrained debiasing model comparison';
+        fullCandidates = {
+            'debiasing_percentageEstimationF2025_jags.mat'
+            };
+        expertiseCandidates = {
+            'debiasing_alpha0_percentageEstimationF2025_jags.mat'
+            };
+        anchoringCandidates = {
+            'debiasing_commonSigma_percentageEstimationF2025_jags.mat'
+            };
+        anchoredOnlyCandidates = {
+            'debiasing_percentageEstimationF2025AnchoredOnly_jags.mat'
+            };
+        noAnchorGroupLong = 3;
+        anchoredGroupLong = [1 2];
+
     otherwise
         error('report_constrained_debiasing:UnknownData', 'Unknown dataTag: %s', dataTag);
 end
@@ -86,42 +108,35 @@ cleanupObj = onCleanup(@() fclose(fid)); %#ok<NASGU>
 w = @(varargin) local_writef(fid, varargin{:});
 
 w('%s\n', titleLine);
-w('Performance = RMSE across questions of the estimate vector vs truth\n');
-w('(same aggregate metric as the manuscript performance figure).\n');
+w('Performance = RMSE across questions of the estimate vector vs truth.\n');
 w('\n');
 w('Model variants\n');
-w('  full                 person-specific expertise (sigma) and anchoring (alpha)\n');
-w('  expertise only       alpha fixed at 0 (no anchoring adjustment)\n');
-w('  anchoring only       shared expertise (common sigma), person-specific alpha\n');
-w('  full, anchored only  full model fit using only low/high-anchor individuals\n');
+w('  anchoring model                 person-specific expertise (sigma) and anchoring (alpha)\n');
+w('  expertise only                  alpha fixed at 0 (no anchoring adjustment)\n');
+w('  anchoring only                  shared expertise (common sigma), person-specific alpha\n');
+w('  anchoring model, anchored only  full model fit using only low/high-anchor individuals\n');
 w('\n');
 
-w('Baselines (data averages)\n');
-w('  %-26s%8.4f\n', 'full crowd RMSE:', crowdFull);
-w('  %-26s%8.4f\n', 'anchored crowd RMSE:', crowdHL);
-w('  %-26s%8.4f\n', 'no-anchor crowd RMSE:', crowdN);
-w('\n');
-
-w('Models\n');
-w('  %-33s%-6s %12s  %14s  %14s\n', ...
-    'model', 'RMSE', 'vs full model', 'vs full crowd', 'vs anchor crowd');
-w('  %s\n', repmat('-', 1, 90));
+w('  %-36s%s\n', 'method', 'RMSE');
+w('  %s\n', repmat('-', 1, 45));
 
 rows = {
-    'full', fullRmse
-    'expertise only (alpha=0)', expRmse
-    'anchoring only (common sigma)', ancRmse
-    'full, anchored individuals only', aoRmse
+    'full crowd', crowdFull
+    'anchor crowd', crowdHL
+    'no-anchor crowd', crowdN
+    'anchoring model', fullRmse
+    'expertise only', expRmse
+    'anchoring only', ancRmse
+    'anchoring model, anchored only', aoRmse
     };
 
 for i = 1:size(rows, 1)
     label = rows{i, 1};
     rmse = rows{i, 2};
     if ~isfinite(rmse)
-        w('  %-33s%-6s %12s  %14s  %14s\n', label, 'NA', 'NA', 'NA', 'NA');
+        w('  %-36s%s\n', label, 'NA');
     else
-        w('  %-33s%.4f  %12.4f  %14.4f  %14.4f\n', ...
-            label, rmse, rmse - fullRmse, rmse - crowdFull, rmse - crowdHL);
+        w('  %-36s%.4f\n', label, rmse);
     end
 end
 
@@ -142,14 +157,20 @@ estN = nan(nQ, 1);
 for q = 1:nQ
     yAll = d.estimateLong(d.questionLong == q);
     yHL = d.estimateLong(ismember(d.groupLong, anchoredGroups) & d.questionLong == q);
-    yN = d.estimateLong(d.groupLong == noAnchorGroup & d.questionLong == q);
+    if noAnchorGroup > 0
+        yN = d.estimateLong(d.groupLong == noAnchorGroup & d.questionLong == q);
+        estN(q) = mean(yN(isfinite(yN)));
+    end
     estFull(q) = mean(yAll(isfinite(yAll)));
     estHL(q) = mean(yHL(isfinite(yHL)));
-    estN(q) = mean(yN(isfinite(yN)));
 end
 crowdFull = sqrt(mean((estFull - truth).^2));
 crowdHL = sqrt(mean((estHL - truth).^2));
-crowdN = sqrt(mean((estN - truth).^2));
+if noAnchorGroup > 0
+    crowdN = sqrt(mean((estN - truth).^2));
+else
+    crowdN = NaN;
+end
 end
 
 function [path, rmse] = load_model_rmse(storageDirs, candidates, truth)

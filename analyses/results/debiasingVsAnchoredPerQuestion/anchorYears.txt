@@ -1,10 +1,10 @@
-Event-years (Lee & Dang): debiasing model vs averaged anchored crowd
+Event-years (Lee & Dang): anchoring model vs anchor crowd
 Absolute error |estimate - truth| per question.
-Anchored crowd = mean of low- and high-anchor estimates for that question.
-Debiasing model = posterior mean of mu_q.
+anchor crowd = mean of low- and high-anchor estimates for that question.
+anchoring model = posterior mean of mu_q.
 MCMC: /home/mdlee/Dropbox/GitHub/anchoringInTheYears/models/debiasing/storage/debiasing_anchorYears_jags.mat
 
-Q    label                           truth    crowdHL    modelMu    |errHL|    |errMu| modelWin
+Q    label                           truth     anchor      model     |errA|     |errM| modelWin
 --------------------------------------------------------------------------------------------------------
 1    Thriller                      1983.00    1986.43    1985.60       3.43       2.60        1
 2    Internet                      1983.00    1982.03    1983.60       0.97       0.60        1
@@ -22,5 +22,7 @@ Summary
   Questions:              11
   Model better (abs err): 9 / 11
   Ties / worse:          2
-  Anchored-crowd RMSE:    3.6559
-  Debiasing-model RMSE:   2.1855
+  anchor crowd RMSE:      3.6559
+  anchoring model RMSE:   2.1855
+
+Claim check: NO — model not better on question(s): [3 8]

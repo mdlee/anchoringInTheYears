@@ -1,0 +1,44 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2024 The MathWorks, Inc.
+             R2024b Update 5 (24.2.0.2863752) 64-bit (glnxa64)
+                              January 31, 2025
+
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+JAGS Q1 took 1.2 seconds.
+JAGS Q2 took 0.9 seconds.
+JAGS Q3 took 0.9 seconds.
+JAGS Q4 took 0.9 seconds.
+JAGS Q5 took 0.9 seconds.
+JAGS Q6 took 0.9 seconds.
+JAGS Q7 took 0.8 seconds.
+JAGS Q8 took 0.9 seconds.
+JAGS Q9 took 0.9 seconds.
+JAGS Q10 took 0.9 seconds.
+JAGS Q11 took 0.9 seconds.
+JAGS Q12 took 0.9 seconds.
+JAGS Q13 took 0.9 seconds.
+JAGS Q14 took 0.8 seconds.
+JAGS Q15 took 0.9 seconds.
+JAGS Q16 took 0.9 seconds.
+JAGS Q17 took 0.9 seconds.
+JAGS Q18 took 0.9 seconds.
+JAGS Q19 took 0.9 seconds.
+JAGS Q20 took 0.9 seconds.
+JAGS Q21 took 0.9 seconds.
+JAGS Q22 took 0.9 seconds.
+JAGS Q23 took 0.9 seconds.
+JAGS Q24 took 0.9 seconds.
+JAGS Q25 took 0.9 seconds.
+Done. Samples in /home/mdlee/Dropbox/GitHub/anchoringInTheYears/models/anchoringIndex/storage/anchoringIndex_percentageEstimationF2025_*_jags.mat
+Q2: mean=0.069 CI=[0.017, 0.120]
+Q5: mean=0.043 CI=[-0.023, 0.110]
+Q11: mean=0.031 CI=[-0.030, 0.092]
+Q15: mean=0.104 CI=[0.019, 0.189]
+  analysis: allQanchoring
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/anchoringIndex/{png,eps}/allQanchoring_percentageEstimationF2025
+percentageEstimationF2025 selected outputs written under analyses/results/
+refit_ai_done

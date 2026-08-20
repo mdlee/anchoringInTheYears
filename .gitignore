@@ -1,3 +1,5 @@
 storage/
 **/storage/
 manuscript/
+literature/
+.venv/

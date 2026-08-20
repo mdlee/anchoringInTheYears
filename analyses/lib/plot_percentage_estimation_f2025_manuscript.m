@@ -1,0 +1,524 @@
+function plot_percentage_estimation_f2025_manuscript(repoRoot, storageDirs, printFigures, analysisList, fineTune)
+%PLOT_PERCENTAGE_ESTIMATION_F2025_MANUSCRIPT COGS140J percentage figures.
+% F2025 slider 0%/100% plus W2024 as no-anchor (Barrera-style three conditions).
+
+if nargin < 3
+    printFigures = true;
+end
+if nargin < 4 || isempty(analysisList)
+    analysisList = {
+        'diversityPredictionTheorem'
+        'allQanchoring'
+        'performance'
+        'expertiseVsAnchoring'
+        'debiasingVsAnchoredPerQuestion'
+        'constrainedDebiasing'
+        'aggregateAnchorBF'
+        };
+end
+if nargin < 5 || isempty(fineTune)
+    fineTune = default_fine_tune();
+end
+
+dataDir = fullfile(repoRoot, 'data');
+figTag = 'percentageEstimationF2025';
+
+load(fullfile(dataDir, 'percentageEstimationF2025.mat'), 'd');
+if ~isfield(d, 'questionLabels') || numel(d.questionLabels) < d.nQuestions
+    d.questionLabels = f2025_question_labels();
+end
+load(fullfile(dataDir, 'pantoneColors.mat'), 'pantone');
+peopleColor = {pantone.Flame; pantone.Greenery; pantone.Hazelnut};
+
+for analysisIdx = 1:numel(analysisList)
+    analysisName = analysisList{analysisIdx};
+    fprintf('  analysis: %s\n', analysisName);
+    resultsName = analysisName;
+    if strcmp(analysisName, 'allQanchoring')
+        resultsName = 'anchoringIndex';
+    end
+    outDir = results_dir(repoRoot, resultsName);
+    switch analysisName
+        case 'diversityPredictionTheorem'
+            for qIdx = 1:d.nQuestions
+                plot_f2025_diversityPredictionTheorem(d, qIdx, pantone, peopleColor, storageDirs, fineTune);
+                stem = sprintf('diversityPredictionTheorem_%s_%s', figTag, camelcase_label(d.questionLabels{qIdx}));
+                print_figure(outDir, stem, printFigures);
+                close(gcf);
+            end
+
+        case 'allQanchoring'
+            plot_f2025_all_anchoring(d, pantone, storageDirs, fineTune);
+            print_figure(outDir, ['allQanchoring_', figTag], printFigures);
+            close(gcf);
+
+        case 'performance'
+            plot_f2025_performance(d, pantone, peopleColor, storageDirs, fineTune, false);
+            print_figure(outDir, ['allQPerformanceComparisonAnchor_', figTag], printFigures);
+            close(gcf);
+            plot_f2025_performance(d, pantone, peopleColor, storageDirs, fineTune, true);
+            print_figure(outDir, ['allQPerformanceComparisonDiverseDebiasing_', figTag], printFigures);
+            close(gcf);
+
+        case 'expertiseVsAnchoring'
+            plot_expertise_vs_anchoring(d, pantone, peopleColor, storageDirs, 'percentageEstimationF2025', fineTune);
+            print_figure(outDir, 'inferredExpertiseVsAnchoring_percentageEstimationF2025', printFigures);
+            close(gcf);
+
+        case 'debiasingVsAnchoredPerQuestion'
+            report_debiasing_vs_anchored_per_question(repoRoot, storageDirs, 'percentageEstimationF2025');
+
+        case 'constrainedDebiasing'
+            report_constrained_debiasing(repoRoot, storageDirs, 'percentageEstimationF2025');
+
+        case 'aggregateAnchorBF'
+            report_aggregate_lr_bf(repoRoot, storageDirs, false);
+
+        case {'anchoringIndex', 'debiasingModel', 'outlierRuleComparison'}
+            fprintf('  (skipping %s for percentageEstimationF2025 — not applicable)\n', analysisName);
+
+        otherwise
+            warning('Unknown or inapplicable analysis for percentageEstimationF2025: %s', analysisName);
+    end
+end
+
+fprintf('percentageEstimationF2025 selected outputs written under analyses/results/\n');
+end
+
+function plot_f2025_diversityPredictionTheorem(d, qIdx, pantone, peopleColor, storageDirs, fineTune)
+% Left: low / high / no-anchor distributions. Right: DPT for anchor vs no-anchor crowds.
+questionMatch = qIdx;
+fontSize = fineTune.font.diversityPredictionTheorem;
+height = 1; width = 1;
+truthColor = 'k';
+groupOrder = [2 3 1];  % high, no, low (Barrera draw order)
+
+matchLong = find(d.questionLong == questionMatch);
+y = d.estimateLong(matchLong);
+group = d.groupLong(matchLong);
+yPlot = round(y);
+loAnchor = d.anchors(questionMatch, 1);
+hiAnchor = d.anchors(questionMatch, 2);
+truth = d.truth(questionMatch);
+lo = 0; hi = 100;
+xTick = unique([0:10:100, loAnchor, hiAnchor, truth]);
+xTickLabel = repmat({''}, 1, numel(xTick));
+for iTick = 1:numel(xTick)
+    if abs(xTick(iTick) - truth) < 1e-9
+        xTickLabel{iTick} = sprintf('%g', truth);
+    elseif abs(xTick(iTick) - loAnchor) < 1e-9 || abs(xTick(iTick) - hiAnchor) < 1e-9
+        xTickLabel{iTick} = sprintf('%g', xTick(iTick));
+    end
+end
+
+F = figure; clf; hold on;
+set_figure_safe(F, [0.1 0.3 0.85 0.7], '');
+set(F, 'Units', 'pixels', 'Position', [80 80 1600 700], 'PaperPositionMode', 'auto');
+
+axLeft = subplot(1, 2, 1); hold on;
+set(axLeft, 'xlim', [lo hi], 'xtick', xTick, 'xticklabel', xTickLabel, ...
+    'XTickLabelRotation', 0, 'ycolor', 'none', 'box', 'off', 'tickdir', 'out', ...
+    'layer', 'top', 'ticklength', [0.01 0], 'clipping', 'off', 'fontsize', fontSize);
+moveAxis(axLeft, [1 1 1.5 0.9], [-0.1 0.085 0 0]);
+xlabel(axLeft, 'Estimate', 'fontsize', fontSize + 2);
+Raxes(axLeft, 0.02, 0);
+
+count = zeros(hi - lo + 1, 1);
+T = gobjects(1, 3);
+for groupIdx = 1:3
+    for idx = 1:length(yPlot)
+        if group(idx) == groupOrder(groupIdx) && yPlot(idx) >= lo && yPlot(idx) <= hi
+            T(groupIdx) = rectangle(...
+                'position', [yPlot(idx) - width / 2, count(yPlot(idx) - lo + 1) - height / 2, width, height], ...
+                'facecolor', peopleColor{group(idx)}, ...
+                'edgecolor', 0.2 * ones(1, 3), 'curvature', [0.2 0.2]);
+            count(yPlot(idx) - lo + 1) = count(yPlot(idx) - lo + 1) + height;
+        end
+    end
+    count = ones(hi - lo + 1, 1) * (max(count) + 5);
+end
+for grpIdx = 3:-1:1
+    T(grpIdx) = plot(-10, -10, 's', 'markersize', 12, ...
+        'markerfacecolor', peopleColor{groupOrder(grpIdx)}, 'markeredgecolor', 'none');
+end
+L = legend(T(end:-1:1), {'low anchor (0%)', 'no anchor (W2024)', 'high anchor (100%)'}, ...
+    'autoupdate', 'off', 'box', 'off', 'edgecolor', 'none'); %#ok<NASGU>
+yLim = get(axLeft, 'ylim'); yLim(1) = 0; set(axLeft, 'ylim', yLim);
+H = plot([truth truth], get(axLeft, 'ylim'), 'color', truthColor, 'linewidth', 2); uistack(H, 'bottom');
+H = plot([hiAnchor hiAnchor], get(axLeft, 'ylim'), '--', 'color', truthColor, 'linewidth', 1); uistack(H, 'bottom');
+H = plot([loAnchor loAnchor], get(axLeft, 'ylim'), '--', 'color', truthColor, 'linewidth', 1); uistack(H, 'bottom');
+
+noColor = peopleColor{3};
+fullColor = pantone.LapisBlue;
+omegaStyle = '-'; deltaStyle = '--'; epsilonStyle = ':'; lineWidth = 4;
+offset = navajas_diversity_offsets(d.nQuestions);
+yLo = d.estimateLong(d.groupLong == 1 & d.questionLong == questionMatch);
+yHi = d.estimateLong(d.groupLong == 2 & d.questionLong == questionMatch);
+yNo = d.estimateLong(d.groupLong == 3 & d.questionLong == questionMatch);
+yHiLo = [yHi(:)', yLo(:)'];
+[omegaHL, omegaN, deltaHL, deltaN, epsilon2HL, epsilon2N] = load_or_compute_diversity( ...
+    storageDirs, sprintf('diversityAccuracy_percentageEstimationF2025w2024_%d.mat', qIdx), ...
+    yLo, yHi, yNo, truth);
+
+yLim = [0, ceil(max([max(epsilon2HL(:)), max(epsilon2N(:))], [], 'omitnan'))];
+if ~isfinite(yLim(2)) || yLim(2) <= 0
+    yLim(2) = 1;
+end
+xTickVals = sort(unique([2, length(yNo), length(yHiLo)]));
+axRight = subplot(1, 2, 2); hold on;
+set(axRight, 'xlim', [2 length(yHiLo)], 'xtick', xTickVals, 'XTickLabelRotation', 0, ...
+    'ylim', yLim, 'ytick', yLim, 'box', 'off', 'tickdir', 'out', 'ticklength', [0.01 0], ...
+    'clipping', 'off', 'fontsize', fontSize);
+xlabel(axRight, 'Crowd Size', 'fontsize', fontSize + 2);
+Tylab = ylabel(axRight, 'Mean of Squared Error', 'fontsize', fontSize);
+set(Tylab, 'pos', get(Tylab, 'pos') + [0.03 0 0]);
+moveAxis(axRight, [1 1 0.42 0.9], [0.05 0.085 0 0]);
+Raxes(axRight, 0, 0.01);
+set(axRight, 'Clipping', 'off', 'XTickLabelRotation', 0);
+fontSize = fontSize - 2;
+plot([2 length(yHiLo)], ones(1, 2) * epsilon2HL, epsilonStyle, 'color', fullColor, 'linewidth', lineWidth);
+text(length(yHiLo) + 1, epsilon2HL + offset(questionMatch, 3), 'anchor individual error', 'hor', 'left', 'fontsize', fontSize, 'Clipping', 'off');
+plot([2 length(yNo)], ones(1, 2) * epsilon2N, epsilonStyle, 'color', noColor, 'linewidth', lineWidth);
+text(length(yNo) + 1, epsilon2N + offset(questionMatch, 6), 'no anchor individual error', 'hor', 'left', 'fontsize', fontSize, 'Clipping', 'off');
+plot(2:length(yHiLo), mean(deltaHL(2:end, :), 2), deltaStyle, 'color', fullColor, 'linewidth', lineWidth);
+text(length(yHiLo) + 1, mean(deltaHL(end, :)) + offset(questionMatch, 2), 'anchor crowd diversity', 'hor', 'left', 'fontsize', fontSize, 'Clipping', 'off');
+plot(2:length(yNo), mean(deltaN(2:end, :), 2), deltaStyle, 'color', noColor, 'linewidth', lineWidth);
+text(length(yNo) + 1, mean(deltaN(end, :)) + offset(questionMatch, 5), 'no anchor crowd diversity', 'hor', 'left', 'fontsize', fontSize, 'Clipping', 'off');
+plot(2:length(yHiLo), mean(omegaHL(2:end, :), 2), omegaStyle, 'color', fullColor, 'linewidth', lineWidth);
+text(length(yHiLo) + 1, mean(omegaHL(end, :)) + offset(questionMatch, 1), 'anchor crowd error', 'hor', 'left', 'fontsize', fontSize, 'Clipping', 'off');
+plot(2:length(yNo), mean(omegaN(2:end, :), 2), omegaStyle, 'color', noColor, 'linewidth', lineWidth);
+text(length(yNo) + 1, mean(omegaN(end, :)) + offset(questionMatch, 4), 'no anchor crowd error', 'hor', 'left', 'fontsize', fontSize, 'Clipping', 'off');
+end
+
+function plot_f2025_all_anchoring(d, pantone, storageDirs, fineTune)
+CI = 95; critical = 0; fontSize = fineTune.font.allQanchoringBarrera;
+bounds = zeros(d.nQuestions, 2);
+BF = zeros(d.nQuestions, 1);
+mn = zeros(d.nQuestions, 1);
+[~, srtIdx] = sort(d.truth(:), 'ascend');
+
+for qIdx = 1:d.nQuestions
+    [chains, priorField, postField] = load_anchoring_chains(storageDirs, qIdx);
+    if isempty(chains)
+        [chains, priorField, postField] = load_anchoring_chains(storageDirs, d.questionLabels{qIdx});
+    end
+    if isempty(chains)
+        % Prefer dataset-prefixed index mats
+        path = resolve_storage_file(storageDirs, sprintf('anchoringIndex_percentageEstimationF2025_%d_jags.mat', qIdx));
+        if ~isempty(path)
+            S = load(path, 'chains');
+            chains = S.chains;
+            if isfield(chains, 'A')
+                postField = 'A'; priorField = 'Aprior';
+            elseif isfield(chains, 'alpha')
+                postField = 'alpha'; priorField = 'alphaPrior';
+            end
+        end
+    end
+    if isempty(chains)
+        error('Missing anchoring-index MCMC for percentageEstimationF2025 Q%d (%s)', ...
+            qIdx, d.questionLabels{qIdx});
+    end
+    binLo = 0; binHi = 1; binWidth = 0.01;
+    binCenter = binLo:binWidth:binHi;
+    [~, criticalIdx] = min(abs(binCenter - critical));
+    densityPrior = histcounts(chains.(priorField)(:), ...
+        'binlimits', [binLo - binWidth / 2, binHi + binWidth / 2], ...
+        'binwidth', binWidth, 'normalization', 'pdf');
+    densityPosterior = histcounts(chains.(postField)(:), ...
+        'binlimits', [binLo - binWidth / 2, binHi + binWidth / 2], ...
+        'binwidth', binWidth, 'normalization', 'pdf');
+    BF(qIdx) = exp(log(densityPrior(criticalIdx)) - log(densityPosterior(criticalIdx)));
+    bounds(qIdx, :) = prctile(chains.(postField)(:), [(100 - CI) / 2, CI + (100 - CI) / 2]);
+    mn(qIdx) = mean(chains.(postField)(:));
+end
+
+F = figure; clf; hold on;
+set_figure_safe(F, [0.05 0.02 0.72 0.96], '');
+set(F, 'Units', 'pixels', 'Position', [40 40 1100 900], 'PaperPositionMode', 'auto');
+% Leave room past 1.0 for BF annotations; ticks only on the [0,1] index scale
+set(gca, 'ytick', 1:d.nQuestions, 'ylim', [0.5 d.nQuestions + 0.5], ...
+    'yticklabel', d.questionLabels(srtIdx), 'ydir', 'rev', 'xlim', [0 1.55], ...
+    'xtick', 0:0.2:1, 'xticklabelrot', 0, 'box', 'off', 'tickdir', 'out', ...
+    'ticklength', [0.01 0], 'fontsize', fontSize, 'clipping', 'off');
+moveAxis(gca, [1 1 0.72 0.95], [0.16 0.02 0 0]);
+xlabel('Anchoring Index', 'fontsize', fontSize + 2);
+Raxes(gca, 0.025, 0.01);
+for qIdx = 1:d.nQuestions
+    qi = srtIdx(qIdx);
+    % Display CI clipped to the [0,1] anchoring-index scale (posterior can wander outside)
+    ciPlot = [max(0, bounds(qi, 1)), min(1, bounds(qi, 2))];
+    plot(ciPlot, [qIdx qIdx], '-', 'color', pantone.Aluminum, 'LineWidth', 4);
+    plot(mn(qi), qIdx, 'o', 'markerfacecolor', pantone.PottersClay, ...
+        'markeredgecolor', 'w', 'markersize', 10, 'linewidth', 1);
+    if BF(qi) > 1000
+        str = sprintf('BF_{10} > 1000');
+    elseif BF(qi) > 1
+        str = sprintf('BF_{10} = %1.1f', BF(qi));
+    else
+        str = sprintf('BF_{01} = %1.1f', 1 / BF(qi));
+    end
+    text(1.05, qIdx, str, 'vert', 'mid', 'fontsize', fontSize - 4, 'Clipping', 'off');
+end
+end
+
+function plot_f2025_performance(d, pantone, peopleColor, storageDirs, fineTune, includeDiverse)
+if nargin < 6
+    includeDiverse = false;
+end
+g = resolve_performance_graphics(fineTune);
+height = 1; width = 1;
+fullCrowdColor = 'k';
+noCrowdColor = peopleColor{3};
+anchorCrowdColor = pantone.LapisBlue;
+modelAColor = pantone.Sandstone;
+diverseColor = pantone.PottersClay;
+rng(1);
+
+crowdEst = zeros(d.nQuestions, 1);
+crowdHLEst = zeros(d.nQuestions, 1);
+crowdNEst = zeros(d.nQuestions, 1);
+for qIdx = 1:d.nQuestions
+    yAll = d.estimateLong(d.questionLong == qIdx);
+    yLo = d.estimateLong(d.groupLong == 1 & d.questionLong == qIdx);
+    yHi = d.estimateLong(d.groupLong == 2 & d.questionLong == qIdx);
+    yNo = d.estimateLong(d.groupLong == 3 & d.questionLong == qIdx);
+    crowdEst(qIdx) = mean(yAll);
+    crowdHLEst(qIdx) = mean([yHi(:); yLo(:)]);
+    crowdNEst(qIdx) = mean(yNo);
+end
+e = d.participantRMSE(:);
+omegaCrowd = sqrt(mean((crowdEst - d.truth).^2));
+omegaHLCrowd = sqrt(mean((crowdHLEst - d.truth).^2));
+omegaNCrowd = sqrt(mean((crowdNEst - d.truth).^2));
+
+jagsCandidates = {
+    'debiasing_percentageEstimationF2025_jags.mat'
+    };
+jagsPath = '';
+for i = 1:numel(jagsCandidates)
+    jagsPath = resolve_storage_file(storageDirs, jagsCandidates{i});
+    if ~isempty(jagsPath), break; end
+end
+if isempty(jagsPath)
+    error('Missing debiasing MCMC for percentageEstimationF2025');
+end
+fprintf('Loading %s\n', jagsPath);
+S = load(jagsPath, 'chains');
+chains = S.chains;
+sigmaA = codatable(chains, 'sigma', @mean);
+alphaA = codatable(chains, 'alpha', @mean);
+[omegaAModel, omegaAModelCI] = model_rmse_from_mu(chains, d.truth, 'PosteriorCI', true);
+sigmaPlot = sigmaA(:);
+
+omegaDiverse = NaN;
+omegaDiverseCI = [];
+sigmaDiverse = [];
+alphaDiverse = [];
+if includeDiverse
+    aoCandidates = {
+        'debiasing_percentageEstimationF2025AnchoredOnly_jags.mat'
+        };
+    aoPath = '';
+    for i = 1:numel(aoCandidates)
+        aoPath = resolve_storage_file(storageDirs, aoCandidates{i});
+        if ~isempty(aoPath), break; end
+    end
+    if isempty(aoPath)
+        error('Missing anchored-only debiasing MCMC for percentageEstimationF2025');
+    end
+    fprintf('Loading %s\n', aoPath);
+    Sao = load(aoPath, 'chains');
+    [omegaDiverse, omegaDiverseCI] = model_rmse_from_mu(Sao.chains, d.truth, 'PosteriorCI', true);
+    sigmaDiverse = codatable(Sao.chains, 'sigma', @mean);
+    alphaDiverse = codatable(Sao.chains, 'alpha', @mean);
+end
+
+empiricalAtmp = nan(d.nParticipants, d.nQuestions);
+for pIdx = 1:d.nParticipants
+    for qIdx = 1:d.nQuestions
+        match = find(d.participantLong == pIdx & d.questionLong == qIdx);
+        if isempty(match), continue; end
+        if ~isfinite(d.anchorLong(match)), continue; end
+        denom = d.anchorLong(match) - d.truth(qIdx);
+        if abs(denom) < 1e-9
+            continue;
+        end
+        empiricalAtmp(pIdx, qIdx) = (d.estimateLong(match) - d.truth(qIdx)) / denom;
+    end
+end
+keepAnchored = find(d.participantGroup == 2);
+empiricalA = nanmean(empiricalAtmp, 2);
+empiricalA = empiricalA(keepAnchored);
+if includeDiverse
+    if numel(alphaDiverse) ~= numel(keepAnchored)
+        error('Diverse debiasing alpha length (%d) != n anchored (%d)', ...
+            numel(alphaDiverse), numel(keepAnchored));
+    end
+    alphaA = alphaDiverse(:);
+    sigmaPlot = sigmaDiverse(:);
+    eExpertise = e(keepAnchored);
+    groupExpertise = d.participantGroup(keepAnchored);
+else
+    alphaA = alphaA(keepAnchored);
+    eExpertise = e;
+    groupExpertise = d.participantGroup(:);
+end
+
+F = figure; clf; hold on;
+set_figure_safe(F, [0.2 0.3 0.65 0.45], '');
+set(F, 'renderer', 'opengl');  % FaceAlpha on model CI patch
+xMin = g.xlim(1); xMax = g.xlim(2); xTick = unique(g.xtick(:).');
+set(gca, 'ycolor', 'none', 'xlim', [xMin xMax], 'xtick', xTick, 'box', 'off', ...
+    'tickdir', 'out', 'ticklength', [0.01 0], 'clipping', 'off', 'fontsize', g.font.axis);
+xlabel('Root Mean Squared Error', 'fontsize', g.font.xlabel);
+moveAxis(gca, [1 1 1 0.9], [0 0.075 0 0]);
+Raxes(gca, 0.01, 0.01);
+[count, ~, a] = histcounts(e, -0.5:ceil(max(e)) + 0.5);
+xCenters = (0:length(count) - 1)';
+for idx = 1:length(count)
+    for i = 1:count(idx)
+        match = find(a == idx);
+        match = match(ceil(rand * length(match)));
+        xPos = xCenters(idx);
+        if xPos < xMin - width / 2 || xPos > xMax + width / 2
+            continue;
+        end
+        face = pantone.DuskBlue;
+        if d.participantGroup(match) == 1
+            face = peopleColor{3};  % no-anchor (W2024)
+        end
+        rectangle('position', [xPos - width / 2, i - height / 2 - 0.5, width, height], ...
+            'facecolor', face, 'edgecolor', 0.2 * ones(1, 3), 'curvature', [0.2 0.2]);
+    end
+end
+yLim = get(gca, 'yLim');
+yLim(2) = yLim(2) * (1.35 + 0.1 * includeDiverse);
+set(gca, 'ylim', yLim);
+if includeDiverse
+    mult = 1.22;
+    if isempty(omegaDiverseCI) || numel(omegaDiverseCI) < 2 || any(~isfinite(omegaDiverseCI))
+        error('Diverse debiasing credible interval missing');
+    end
+    Hci = patch([omegaDiverseCI(1) omegaDiverseCI(2) omegaDiverseCI(2) omegaDiverseCI(1)], ...
+        [yLim(1) yLim(1) yLim(2) yLim(2)], diverseColor, ...
+        'EdgeColor', 'none', 'FaceAlpha', 0.2);
+    uistack(Hci, 'bottom');
+    fprintf('Diverse debiasing RMSE: %.2f; 95%% CI: [%.2f, %.2f]\n', ...
+        omegaDiverse, omegaDiverseCI(1), omegaDiverseCI(2));
+    H = plot([omegaDiverse omegaDiverse], mult * get(gca, 'ylim'), 'color', diverseColor, 'linewidth', 4); uistack(H, 'bottom');
+    text(min(omegaDiverse, xMax * 0.95), mult * yLim(2), ' diverse debiasing', ...
+        'fontsize', g.font.crowdLabel, 'Clipping', 'off', 'vert', 'bottom', 'color', diverseColor);
+end
+mult = 1.05;
+if ~isempty(omegaAModelCI)
+    Hci = patch([omegaAModelCI(1) omegaAModelCI(2) omegaAModelCI(2) omegaAModelCI(1)], ...
+        [yLim(1) yLim(1) yLim(2) yLim(2)], modelAColor, ...
+        'EdgeColor', 'none', 'FaceAlpha', 0.2);
+    uistack(Hci, 'bottom');
+    fprintf('Debiasing RMSE (posterior mean of mu): %.2f; 95%% CI from mu draws: [%.2f, %.2f]\n', ...
+        omegaAModel, omegaAModelCI(1), omegaAModelCI(2));
+end
+H = plot([omegaAModel omegaAModel], mult * get(gca, 'ylim'), 'color', modelAColor, 'linewidth', 4); uistack(H, 'bottom');
+text(min(omegaAModel, xMax * 0.95), mult * yLim(2), ' debiasing', 'fontsize', g.font.crowdLabel, 'Clipping', 'off');
+mult = 1;
+H = plot([omegaHLCrowd omegaHLCrowd], mult * get(gca, 'ylim'), 'color', anchorCrowdColor, 'linewidth', 4); uistack(H, 'bottom');
+text(min(omegaHLCrowd, xMax * 0.95), mult * yLim(2), ' anchor crowd', 'fontsize', g.font.crowdLabel);
+mult = 0.9;
+H = plot([omegaNCrowd omegaNCrowd], mult * get(gca, 'ylim'), 'color', noCrowdColor, 'linewidth', 4); uistack(H, 'bottom');
+text(min(omegaNCrowd, xMax * 0.95), mult * yLim(2), ' no-anchor crowd', 'fontsize', g.font.crowdLabel);
+mult = 0.95;
+H = plot([omegaCrowd omegaCrowd], mult * get(gca, 'ylim'), 'color', fullCrowdColor, 'linewidth', 4); uistack(H, 'bottom');
+text(min(omegaCrowd, xMax * 0.95), mult * yLim(2), ' full crowd', 'fontsize', g.font.crowdLabel);
+
+insetKeep = isfinite(eExpertise) & isfinite(sigmaPlot) & eExpertise <= xMax & eExpertise >= xMin;
+A = axes; hold on;
+expertiseYMax = ceil(max(eExpertise(insetKeep), [], 'omitnan') * 1.05);
+expertiseXMax = ceil(max(sigmaPlot(insetKeep), [], 'omitnan') * 1.05);
+expertiseYMax = max(expertiseYMax, 1);
+expertiseXMax = max(expertiseXMax, 1);
+posExp = [g.insetExpertise.bottomLeft(:).' g.insetWidth g.insetHeight];
+set(A, 'units', 'norm', 'position', posExp, ...
+    'xlim', [0 expertiseXMax], 'xtick', [0 expertiseXMax], 'xticklabel', {'hi', 'lo'}, ...
+    'xticklabelrot', 0, 'ylim', [0 expertiseYMax], 'ytick', [0 expertiseYMax], ...
+    'yticklabel', {'lo', 'hi'}, 'box', 'off', 'tickdir', 'out', 'ticklength', [0.02 0], ...
+    'fontsize', g.font.insetAxis);
+axis square;
+xlabel('inferred expertise', 'fontsize', g.font.insetLabel);
+ylabel('observed error', 'fontsize', g.font.insetLabel);
+insetIdx = find(insetKeep);
+shuffle = randperm(numel(insetIdx));
+for idx2 = 1:numel(insetIdx)
+    idx = insetIdx(shuffle(idx2));
+    H = plot(sigmaPlot(idx), eExpertise(idx), 'o', 'markerfacecolor', pantone.DuskBlue, ...
+        'markersize', 6, 'markeredgecolor', 'k');
+    if groupExpertise(idx) == 1
+        set(H, 'markerfacecolor', peopleColor{3});
+    end
+end
+Raxes(gca, 0.01, 0.01);
+rS = corrcoef(sigmaPlot(insetKeep), eExpertise(insetKeep), 'Rows', 'complete');
+xl = xlim; yl = ylim;
+text(xl(1), yl(2), sprintf('r=%.2f', rS(1, 2)), 'fontsize', g.font.insetCorr, 'hor', 'left', 'vert', 'top');
+
+A = axes; hold on;
+errAnchored = e(keepAnchored);
+insetAnchorKeep = isfinite(alphaA) & isfinite(empiricalA) & isfinite(errAnchored) & ...
+    errAnchored <= xMax & errAnchored >= xMin;
+posAnc = [g.insetAnchoring.bottomLeft(:).' g.insetWidth g.insetHeight];
+set(A, 'units', 'norm', 'position', posAnc, 'xlim', [0 1], 'xtick', [-1 0 1], ...
+    'xticklabelrot', 0, 'ylim', [-1 1], 'ytick', [-1 0 1], 'box', 'off', 'tickdir', 'out', ...
+    'ticklength', [0.02 0], 'fontsize', g.font.insetAxis);
+axis square;
+xlabel('inferred anchoring', 'fontsize', g.font.insetLabel);
+ylabel('observed anchoring', 'fontsize', g.font.insetLabel);
+anchorIdx = find(insetAnchorKeep);
+shuffle = randperm(numel(anchorIdx));
+for idx2 = 1:numel(anchorIdx)
+    idx = anchorIdx(shuffle(idx2));
+    plot(alphaA(idx), empiricalA(idx), 'o', 'markerfacecolor', pantone.DuskBlue, ...
+        'markersize', 6, 'markeredgecolor', 'k');
+end
+Raxes(gca, 0.01, 0.01);
+rA = corrcoef(alphaA(insetAnchorKeep), empiricalA(insetAnchorKeep), 'Rows', 'complete');
+xl = xlim; yl = ylim;
+text(xl(1), yl(2), sprintf('r=%.2f', rA(1, 2)), 'fontsize', g.font.insetCorr, 'hor', 'left', 'vert', 'top');
+fprintf('Correlations (percentageEstimationF2025): anchoring=%.4f, expertise=%.4f\n', rA(1, 2), rS(1, 2));
+fprintf('Crowd RMSE: full=%.2f anchor=%.2f no-anchor=%.2f; debiasing=%.2f', ...
+    omegaCrowd, omegaHLCrowd, omegaNCrowd, omegaAModel);
+if includeDiverse
+    fprintf('; diverse debiasing=%.2f', omegaDiverse);
+end
+fprintf('\n');
+end
+
+function g = resolve_performance_graphics(fineTune)
+% Resolve performance-plot layout/fonts from fineTune, with defaults.
+defaults = default_fine_tune();
+g = defaults.performance;
+if isfield(fineTune, 'performance')
+    g = merge_struct(g, fineTune.performance);
+elseif isfield(fineTune, 'font') && isfield(fineTune.font, 'performance')
+    % Legacy single font size → apply across performance fonts
+    fs = fineTune.font.performance;
+    g.font.axis = fs;
+    g.font.xlabel = fs + 2;
+    g.font.crowdLabel = fs;
+    g.font.insetAxis = fs;
+    g.font.insetLabel = fs;
+    g.font.insetCorr = fs;
+end
+end
+
+function out = merge_struct(base, over)
+out = base;
+fn = fieldnames(over);
+for i = 1:numel(fn)
+    name = fn{i};
+    if isstruct(over.(name)) && isfield(out, name) && isstruct(out.(name))
+        out.(name) = merge_struct(out.(name), over.(name));
+    else
+        out.(name) = over.(name);
+    end
+end
+end

@@ -22,7 +22,7 @@ switch dataTag
             'anchorYears_7b2_anchorYears_jags.mat'
             };
         fileStem = 'anchorYears';
-        titleLine = 'Event-years (Lee & Dang): debiasing model vs averaged anchored crowd';
+        titleLine = 'Event-years (Lee & Dang): anchoring model vs anchor crowd';
         % Anchored groups in long data: 1 = low, 2 = high (3 = no anchor)
         anchoredGroups = [1 2];
 
@@ -37,7 +37,19 @@ switch dataTag
             'debiasingNavajas_6_navajasExperiment2_jags.mat'
             };
         fileStem = 'barreraLemarchandExperiment2';
-        titleLine = 'Barrera-Lemarchand Exp 2: debiasing model vs averaged anchored crowd';
+        titleLine = 'Barrera-Lemarchand Exp 2: anchoring model vs anchor crowd';
+        anchoredGroups = [1 2];
+
+    case 'percentageEstimationF2025'
+        load(fullfile(dataDir, 'percentageEstimationF2025.mat'), 'd');
+        if ~isfield(d, 'questionLabels') || numel(d.questionLabels) < d.nQuestions
+            d.questionLabels = f2025_question_labels();
+        end
+        jagsCandidates = {
+            'debiasing_percentageEstimationF2025_jags.mat'
+            };
+        fileStem = 'percentageEstimationF2025';
+        titleLine = 'COGS140J F2025 percentageEstimation: anchoring model vs anchor crowd';
         anchoredGroups = [1 2];
 
     otherwise
@@ -90,12 +102,12 @@ w = @(varargin) local_writef(fid, varargin{:});
 
 w('%s\n', titleLine);
 w('Absolute error |estimate - truth| per question.\n');
-w('Anchored crowd = mean of low- and high-anchor estimates for that question.\n');
-w('Debiasing model = posterior mean of mu_q.\n');
+w('anchor crowd = mean of low- and high-anchor estimates for that question.\n');
+w('anchoring model = posterior mean of mu_q.\n');
 w('MCMC: %s\n', jagsPath);
 w('\n');
 w('%-4s %-28s %8s %10s %10s %10s %10s %8s\n', ...
-    'Q', 'label', 'truth', 'crowdHL', 'modelMu', '|errHL|', '|errMu|', 'modelWin');
+    'Q', 'label', 'truth', 'anchor', 'model', '|errA|', '|errM|', 'modelWin');
 w('%s\n', repmat('-', 1, 104));
 
 for qIdx = 1:nQ
@@ -118,8 +130,8 @@ w('\nSummary\n');
 w('  Questions:              %d\n', nQ);
 w('  Model better (abs err): %d / %d\n', nWin, nQ);
 w('  Ties / worse:          %d\n', nQ - nWin);
-w('  Anchored-crowd RMSE:    %.4f\n', sqrt(mean((crowdHL - truth).^2)));
-w('  Debiasing-model RMSE:   %.4f\n', sqrt(mean((modelMu - truth).^2)));
+w('  anchor crowd RMSE:      %.4f\n', sqrt(mean((crowdHL - truth).^2)));
+w('  anchoring model RMSE:   %.4f\n', sqrt(mean((modelMu - truth).^2)));
 
 if nWin == nQ
     w('\nClaim check: YES — model more accurate on every question.\n');

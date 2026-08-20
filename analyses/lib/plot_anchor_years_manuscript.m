@@ -57,8 +57,11 @@ for analysisIdx = 1:numel(analysisList)
             close(gcf);
 
         case 'performance'
-            plot_ay_performance(d, pantone, peopleColor, storageDirs, fineTune);
+            plot_ay_performance(d, pantone, peopleColor, storageDirs, fineTune, false);
             print_figure(outDir, 'allQPerformanceComparisonAnchor_AllQuestions', printFigures);
+            close(gcf);
+            plot_ay_performance(d, pantone, peopleColor, storageDirs, fineTune, true);
+            print_figure(outDir, 'allQPerformanceComparisonDiverseDebiasing_AllQuestions', printFigures);
             close(gcf);
 
         case 'debiasingModel'
@@ -284,12 +287,16 @@ for qIdx = 1:d.nQuestions
 end
 end
 
-function plot_ay_performance(d, pantone, peopleColor, storageDirs, fineTune)
+function plot_ay_performance(d, pantone, peopleColor, storageDirs, fineTune, includeDiverse)
+if nargin < 6
+    includeDiverse = false;
+end
 fontSize = fineTune.font.performance; height = 1; width = 1;
 fullCrowdColor = 'k';
 noCrowdColor = peopleColor{3};
 anchorCrowdColor = pantone.LapisBlue;
 modelAColor = pantone.Sandstone;
+diverseColor = pantone.PottersClay;
 rng(1);
 e = d.participantRMSE;
 crowdEst = zeros(d.nQuestions, 1);
@@ -299,8 +306,8 @@ for qIdx = 1:d.nQuestions
     matchLong = find(d.questionLong == qIdx);
     y = d.estimateLong(matchLong);
     crowdEst(qIdx) = mean(y);
-    % Match anchorYears_0.m / manuscript performance figure definition
-    crowdHLEst(qIdx) = mean([d.estimate{qIdx, 2}, d.estimate{qIdx, 3}]);
+    % estimate cells: col1=low, col2=high, col3=no-anchor
+    crowdHLEst(qIdx) = mean([d.estimate{qIdx, 1}, d.estimate{qIdx, 2}]);
     crowdNEst(qIdx) = mean(d.estimate{qIdx, 3});
 end
 omegaCrowd = sqrt(mean((crowdEst(:) - d.truth(:)).^2));
@@ -326,6 +333,30 @@ sigmaA = codatable(chains, 'sigma', @mean);
 alphaA = codatable(chains, 'alpha', @mean);
 [omegaAModel, omegaAModelCI] = model_rmse_from_mu(chains, d.truth, 'PosteriorCI', true);
 
+omegaDiverse = NaN;
+omegaDiverseCI = [];
+sigmaDiverse = [];
+alphaDiverse = [];
+if includeDiverse
+    aoCandidates = {
+        'debiasing_anchorYearsAnchoredOnly_jags.mat'
+        'anchorYears_7b2_anchorYearsAnchoredOnly_jags.mat'
+        };
+    aoPath = '';
+    for i = 1:numel(aoCandidates)
+        aoPath = resolve_storage_file(storageDirs, aoCandidates{i});
+        if ~isempty(aoPath), break; end
+    end
+    if isempty(aoPath)
+        error('Missing anchored-only debiasing MCMC for anchorYears');
+    end
+    fprintf('Loading %s\n', aoPath);
+    Sao = load(aoPath, 'chains');
+    [omegaDiverse, omegaDiverseCI] = model_rmse_from_mu(Sao.chains, d.truth, 'PosteriorCI', true);
+    sigmaDiverse = codatable(Sao.chains, 'sigma', @mean);
+    alphaDiverse = codatable(Sao.chains, 'alpha', @mean);
+end
+
 empiricalAtmp = nan(d.nParticipants, d.nQuestions);
 for pIdx = 1:d.nParticipants
     for qIdx = 1:d.nQuestions
@@ -336,10 +367,23 @@ end
 keepAnchored = find(d.participantGroup == 12);
 tmp = nanmean(empiricalAtmp, 2);
 empiricalA = tmp(keepAnchored);
-alphaA = alphaA(keepAnchored);
+if includeDiverse
+    if numel(alphaDiverse) ~= numel(keepAnchored)
+        error('Diverse debiasing alpha length (%d) != n anchored (%d)', ...
+            numel(alphaDiverse), numel(keepAnchored));
+    end
+    alphaA = alphaDiverse(:);
+    sigmaA = sigmaDiverse(:);
+    eExpertise = e(keepAnchored);
+    groupExpertise = d.participantGroup(keepAnchored);
+else
+    alphaA = alphaA(keepAnchored);
+    eExpertise = e;
+    groupExpertise = d.participantGroup;
+end
 
 F = figure; clf; hold on;
-setFigure(F, [0.2 0.3 0.65 0.45], '');
+set_figure_safe(F, [0.2 0.3 0.65 0.45], '');
 set(F, 'renderer', 'opengl');  % FaceAlpha on model CI patch
 set(gca, 'ycolor', 'none', 'xlim', [0 max(e) + 1], ...
     'xtick', unique(0:10:round(max(e), -1)), 'box', 'off', 'tickdir', 'out', ...
@@ -359,25 +403,42 @@ for idx = 1:length(count)
         end
     end
 end
-yLim = get(gca, 'yLim'); yLim(2) = yLim(2) * 1.2; set(gca, 'ylim', yLim);
+yLim = get(gca, 'yLim');
+yLim(2) = yLim(2) * (1.35 + 0.1 * includeDiverse);
+set(gca, 'ylim', yLim);
+if includeDiverse
+    mult = 1.22;
+    if isempty(omegaDiverseCI) || numel(omegaDiverseCI) < 2 || any(~isfinite(omegaDiverseCI))
+        error('Diverse debiasing credible interval missing');
+    end
+    Hci = patch([omegaDiverseCI(1) omegaDiverseCI(2) omegaDiverseCI(2) omegaDiverseCI(1)], ...
+        [yLim(1) yLim(1) yLim(2) yLim(2)], diverseColor, ...
+        'EdgeColor', 'none', 'FaceAlpha', 0.2);
+    uistack(Hci, 'bottom');
+    fprintf('Diverse debiasing RMSE: %.2f; 95%% CI: [%.2f, %.2f]\n', ...
+        omegaDiverse, omegaDiverseCI(1), omegaDiverseCI(2));
+    H = plot([omegaDiverse omegaDiverse], mult * get(gca, 'ylim'), 'color', diverseColor, 'linewidth', 4); uistack(H, 'bottom');
+    text(omegaDiverse, mult * yLim(2), ' diverse debiasing', ...
+        'fontsize', fontSize, 'Clipping', 'off', 'vert', 'bottom', 'color', diverseColor);
+end
 mult = 1.05;
 if ~isempty(omegaAModelCI)
     Hci = patch([omegaAModelCI(1) omegaAModelCI(2) omegaAModelCI(2) omegaAModelCI(1)], ...
         [yLim(1) yLim(1) yLim(2) yLim(2)], modelAColor, ...
         'EdgeColor', 'none', 'FaceAlpha', 0.2);
     uistack(Hci, 'bottom');
-    fprintf('Model RMSE (posterior mean of mu): %.2f; 95%% CI from mu draws: [%.2f, %.2f]\n', ...
+    fprintf('Debiasing RMSE (posterior mean of mu): %.2f; 95%% CI from mu draws: [%.2f, %.2f]\n', ...
         omegaAModel, omegaAModelCI(1), omegaAModelCI(2));
 end
 H = plot([omegaAModel omegaAModel], mult * get(gca, 'ylim'), 'color', modelAColor, 'linewidth', 4); uistack(H, 'bottom');
-text(omegaAModel, mult * yLim(2), ' anchoring model', 'fontsize', fontSize);
-mult = 0.9;
+text(omegaAModel, mult * yLim(2), ' debiasing', 'fontsize', fontSize, 'Clipping', 'off');
+mult = 0.95;
 H = plot([omegaHLCrowd omegaHLCrowd], mult * get(gca, 'ylim'), 'color', anchorCrowdColor, 'linewidth', 4); uistack(H, 'bottom');
 text(omegaHLCrowd, mult * yLim(2), ' anchor crowd', 'fontsize', fontSize);
 mult = 0.85;
 H = plot([omegaNCrowd omegaNCrowd], mult * get(gca, 'ylim'), 'color', noCrowdColor, 'linewidth', 4); uistack(H, 'bottom');
 text(omegaNCrowd, mult * yLim(2), ' no-anchor crowd', 'fontsize', fontSize);
-mult = 0.95;
+mult = 0.9;
 H = plot([omegaCrowd omegaCrowd], mult * get(gca, 'ylim'), 'color', fullCrowdColor, 'linewidth', 4); uistack(H, 'bottom');
 text(omegaCrowd, mult * yLim(2), ' full crowd', 'fontsize', fontSize);
 
@@ -388,17 +449,17 @@ set(A, 'units', 'norm', 'position', [0.75 0.5 0.2 0.4], 'xlim', [0 75], 'xtick',
 axis square;
 xlabel('inferred expertise', 'fontsize', fontSize);
 ylabel('observed error', 'fontsize', fontSize);
-shuffle = randperm(d.nParticipants);
-for idx2 = 1:d.nParticipants
+shuffle = randperm(numel(eExpertise));
+for idx2 = 1:numel(eExpertise)
     idx = shuffle(idx2);
-    H = plot(sigmaA(idx), d.participantRMSE(idx), 'o', 'markerfacecolor', pantone.DuskBlue, ...
+    H = plot(sigmaA(idx), eExpertise(idx), 'o', 'markerfacecolor', pantone.DuskBlue, ...
         'markersize', 6, 'markeredgecolor', 'k');
-    if d.participantGroup(idx) == 3
+    if groupExpertise(idx) == 3
         set(H, 'markerfacecolor', peopleColor{3});
     end
 end
 Raxes(gca, 0.01, 0.01);
-rS = corrcoef(sigmaA(:), d.participantRMSE(:), 'Rows', 'complete');
+rS = corrcoef(sigmaA(:), eExpertise(:), 'Rows', 'complete');
 xl = xlim; yl = ylim;
 text(xl(1), yl(2), sprintf('r=%.2f', rS(1, 2)), 'fontsize', fontSize, 'hor', 'left', 'vert', 'top');
 
@@ -409,8 +470,8 @@ set(A, 'units', 'norm', 'position', [0.5 0.5 0.2 0.4], 'xlim', [-1 1], 'xtick', 
 axis square;
 xlabel('inferred anchoring', 'fontsize', fontSize);
 ylabel('observed anchoring', 'fontsize', fontSize);
-shuffle = randperm(length(keepAnchored));
-for idx2 = 1:length(keepAnchored)
+shuffle = randperm(numel(keepAnchored));
+for idx2 = 1:numel(keepAnchored)
     idx = shuffle(idx2);
     plot(alphaA(idx), empiricalA(idx), 'o', 'markerfacecolor', pantone.DuskBlue, ...
         'markersize', 6, 'markeredgecolor', 'k');

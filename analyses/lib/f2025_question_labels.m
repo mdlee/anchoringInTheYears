@@ -1,0 +1,30 @@
+function labels = f2025_question_labels()
+%F2025_QUESTION_LABELS Short labels for COGS140J F2025 percentage items.
+labels = {
+    'left handed'
+    'extra rib'
+    'plant life in ocean'
+    'cats asleep'
+    'bones in feet'
+    'Brazil coverage'
+    'women candles'
+    'China toys'
+    'rice staple'
+    'water expands'
+    'carrot fat'
+    'food waste'
+    'oxygen brain'
+    'cucumber water'
+    'jellyfish'
+    'US McDonalds'
+    'countries north equator'
+    'body carbon hydrogen nitrogen'
+    'US land government'
+    'R-rated movies'
+    'body atom replacement'
+    'broken bone'
+    'almond chocolate manufacturers'
+    'US adults sun is star'
+    'lightning men'
+    };
+end

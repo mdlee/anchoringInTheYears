@@ -16,6 +16,11 @@ switch dataset
         anchoredGroup = 2;
         noAnchorGroup = 1;
         xMaxFloor = 1;
+    case 'percentageEstimationF2025'
+        jagsCandidates = {'debiasing_percentageEstimationF2025_jags.mat'};
+        anchoredGroup = 2;
+        noAnchorGroup = 1;  % W2024 no-anchor
+        xMaxFloor = 1;
     otherwise
         error('Unknown dataset %s', dataset);
 end
@@ -43,7 +48,7 @@ groups = groups(keep);
 r = corrcoef(sigmaPlot, alphaPlot, 'Rows', 'complete');
 
 F = figure; clf; hold on;
-setFigure(F, [0.35 0.3 0.35 0.45], '');
+set_figure_safe(F, [0.35 0.3 0.35 0.45], '');
 xMax = max(ceil(max(sigmaPlot) * 1.05), xMaxFloor);
 set(gca, ...
     'xlim', [0 xMax], ...

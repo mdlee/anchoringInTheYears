@@ -10,6 +10,7 @@ postField = '';
 candidates = {};
 if isnumeric(questionNameOrIdx)
     qIdx = questionNameOrIdx;
+    candidates{end+1} = sprintf('anchoringIndex_percentageEstimationF2025_%d_jags.mat', qIdx); %#ok<AGROW>
     candidates{end+1} = sprintf('anchoringIndex_%d_jags.mat', qIdx); %#ok<AGROW>
 else
     qName = questionNameOrIdx;

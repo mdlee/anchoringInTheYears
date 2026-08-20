@@ -25,7 +25,7 @@ anchoringInTheYears/
 │       ├── expertiseVsAnchoring/
 │       ├── outlierRuleComparison/
 │       │   └── contaminantVsOutlier.txt
-│       ├── debiasingVsAnchoredPerQuestion/  # per-question model vs anchored crowd
+│       ├── debiasingVsAnchoredPerQuestion/  # per-question anchoring model vs anchor crowd
 │       └── constrainedDebiasing/            # expertise-only / anchoring-only / anchored-only
 └── README.md
 ```
@@ -63,6 +63,33 @@ Open data for Experiment 2 of:
 > Barrera-Lemarchand, F., Balenzuela, P., Bahrami, B., Deroy, O., & Navajas, J. (2024). Promoting erroneous divergent opinions increases the wisdom of crowds. *Psychological Science, 35*(8), 872–886. https://doi.org/10.1177/09567976241251991
 
 Sourced from [Experiment2withoutlog.mat](https://osf.io/w3ts9) in the [OSF repository](https://osf.io/ch5qw/). Same long-format column names; here `version` encodes group (1 = low anchor, 2 = high anchor, 3 = no anchor). Supporting mat: `data/barreraEtAlExp2.mat`.
+
+### COGS140J F2025 percentageEstimation (`data/percentageEstimationF2025Long.csv`)
+
+Combines two class cohorts on the **same 25** general-knowledge percentage items:
+
+- **F2025**: between-subjects slider-start as anchoring on **0%** (left) vs **100%** (right)
+- **W2024**: same items, no slider-side manipulation → treated as the **no-anchor** group
+
+| Column | Description |
+| --- | --- |
+| `participant` | Participant ID (1–324; 98 left + 56 right + 170 no-anchor) |
+| `question` | Question ID (1–25) |
+| `version` | 1 = slider left (anchor 0); 2 = slider right (anchor 100); 3 = no anchor (W2024) |
+| `truth` | Correct percentage |
+| `anchor` | 0, 100, or `nan` |
+| `highOrLow` | `nan` (no comparison response) |
+| `estimate` | Percentage estimate (0–100) |
+
+Supporting mat: `data/percentageEstimationF2025.mat`. Source mats: `COGS140J/tasks/percentageEstimation/140JF2025Estimation.mat` and `140JW2024Estimation.mat`.
+
+Pipeline entry: from the repo root, run `run_percentageEstimationF2025.m` (fits anchoring-index + debiasing, then `analyses.m`). Or fit separately:
+
+```matlab
+cd models/anchoringIndex; anchoringIndex_percentageEstimationF2025
+cd ../debiasing; debiasing_percentageEstimationF2025
+cd ../../analyses; analyses   % with dataList = {'percentageEstimationF2025'}
+```
 
 ## Models
 
@@ -124,14 +151,14 @@ Font sizes and related styling live in the `%% Fine tune` block at the top of `a
 | `debiasingModel` | `debiasingModel/{png,eps}/` | Debiasing schematic |
 | `expertiseVsAnchoring` | `expertiseVsAnchoring/{png,eps}/` | Inferred expertise vs anchoring |
 | `outlierRuleComparison` | `outlierRuleComparison/` | Text report + optional bar chart; event years only |
-| `debiasingVsAnchoredPerQuestion` | `debiasingVsAnchoredPerQuestion/` | Text report: per-question \|err\| model vs anchored crowd |
+| `debiasingVsAnchoredPerQuestion` | `debiasingVsAnchoredPerQuestion/` | Text report: per-question \|err\| anchoring model vs anchor crowd |
 | `constrainedDebiasing` | `constrainedDebiasing/` | Text report: expertise-only / anchoring-only / anchored-only RMSE |
 
 `outlierRuleComparison` rebuilds raw long data from `anchoring140JW2024.mat` and compares the parse rule (mean ± 3 SD, second pass on McDonald's and Pixar) with classic 1.5 × IQR fences. Report: `contaminantVsOutlier.txt`.
 
-`debiasingVsAnchoredPerQuestion` compares the debiasing-model crowd estimate to the averaged anchored crowd on each question for event years and Barrera Exp 2. Reports: `anchorYears.txt`, `barreraLemarchandExperiment2.txt`.
+`debiasingVsAnchoredPerQuestion` compares the anchoring-model crowd estimate to the anchor crowd on each question for event years and Barrera Exp 2. Reports: `anchorYears.txt`, `barreraLemarchandExperiment2.txt`.
 
-`constrainedDebiasing` compares full, expertise-only (`alpha=0`), anchoring-only (common `sigma`), and full-model-on-anchored-only fits against crowd averages. Reports: `anchorYears.txt`, `barreraLemarchandExperiment2.txt`. Anchored-only fits can be produced with `analyses/lib/fit_anchored_only_debiasing.m`.
+`constrainedDebiasing` compares anchoring model, expertise-only (`alpha=0`), anchoring-only (common `sigma`), and anchoring-model-on-anchored-only fits against full / anchor / no-anchor crowd averages. Reports: `anchorYears.txt`, `barreraLemarchandExperiment2.txt`. Anchored-only fits can be produced with `analyses/lib/fit_anchored_only_debiasing.m`.
 
 ### Dependencies for `analyses.m`
 

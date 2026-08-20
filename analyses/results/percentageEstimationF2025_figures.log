@@ -1,0 +1,96 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2024 The MathWorks, Inc.
+             R2024b Update 5 (24.2.0.2863752) 64-bit (glnxa64)
+                              January 31, 2025
+
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+Using storage dirs:
+  /home/mdlee/Dropbox/GitHub/anchoringInTheYears/models/anchoringIndex/storage
+  /home/mdlee/Dropbox/GitHub/anchoringInTheYears/models/debiasing/storage
+  /home/mdlee/Dropbox/CC2/code/anchorYears/storage
+  /home/mdlee/Dropbox/CC2/code/anchorYears/git/storage
+
+=== Dataset: percentageEstimationF2025 ===
+  analysis: diversityPredictionTheorem
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_1.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_LeftHanded
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_2.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_ExtraRib
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_3.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_PlantLifeInOcean
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_4.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_CatsAsleep
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_5.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_BonesInFeet
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_6.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_BrazilCoverage
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_7.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_WomenCandles
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_8.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_ChinaToys
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_9.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_RiceStaple
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_10.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_WaterExpands
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_11.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_CarrotFat
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_12.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_FoodWaste
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_13.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_OxygenBrain
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_14.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_CucumberWater
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_15.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_Jellyfish
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_16.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_USMcDonalds
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_17.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_CountriesNorthEquator
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_18.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_BodyCarbonHydrogenNitrogen
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_19.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_USLandGovernment
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_20.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_RRatedMovies
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_21.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_BodyAtomReplacement
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_22.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_BrokenBone
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_23.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_AlmondChocolateManufacturers
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_24.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_USAdultsSunIsStar
+Computing diversity metrics (10000 reps) for diversityAccuracy_percentageEstimationF2025_25.mat ...
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/diversityPredictionTheorem/{png,eps}/diversityPredictionTheorem_percentageEstimationF2025_LightningMen
+  analysis: allQanchoring
+[Warning: Cannot set Renderer to OpenGL on this figure.] 
+[> In plot_percentage_estimation_f2025_manuscript>plot_f2025_all_anchoring (line 225)
+In plot_percentage_estimation_f2025_manuscript (line 50)
+In analyses (line 84)] 
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/anchoringIndex/{png,eps}/allQanchoring_percentageEstimationF2025
+  analysis: performance
+Loading /home/mdlee/Dropbox/GitHub/anchoringInTheYears/models/debiasing/storage/debiasing_percentageEstimationF2025_jags.mat
+[Warning: Cannot set Renderer to OpenGL on this figure.] 
+[> In plot_percentage_estimation_f2025_manuscript>plot_f2025_performance (line 311)
+In plot_percentage_estimation_f2025_manuscript (line 55)
+In analyses (line 84)] 
+Model RMSE (posterior mean of mu): 20.45; 95% CI from mu draws: [19.82, 21.57]
+Correlations (percentageEstimationF2025): anchoring=0.4154, expertise=0.7521
+Crowd RMSE: full=21.69 anchor=21.69 (identical expected); model=20.45
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/performance/{png,eps}/allQPerformanceComparisonAnchor_percentageEstimationF2025
+  analysis: expertiseVsAnchoring
+{Error using setFigure (line 29)
+not sure about monitors
+Error in plot_expertise_vs_anchoring (line 51)
+setFigure(F, [0.35 0.3 0.35 0.45], '');
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in plot_percentage_estimation_f2025_manuscript (line 60)
+            plot_expertise_vs_anchoring(d, pantone, peopleColor, storageDirs, 'percentageEstimationF2025', fineTune);
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in analyses (line 84)
+         plot_percentage_estimation_f2025_manuscript(repoRoot, storageDirs, printFigures, analysisList, fineTune);
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^} 

@@ -1,0 +1,25 @@
+# Overall L vs R mean difference (person means aggregated over questions)
+# H0: delta = 0  vs  H1: delta ~ N(0, priorSD^2)
+# yL / yH are each person's mean estimate across questions.
+data{
+  nL = length(yL)
+  nH = length(yH)
+  lo = min(min(yL), min(yH))
+  hi = max(max(yL), max(yH))
+  mn = mean(c(mean(yL), mean(yH)))
+}
+model{
+  mu ~ dnorm(mn, 1/(hi - lo)^2)
+  delta ~ dnorm(0, 1/priorSD^2)
+  muL = mu - delta/2
+  muH = mu + delta/2
+  sigmaL ~ dunif(0.01, hi - lo)
+  sigmaH ~ dunif(0.01, hi - lo)
+  for (i in 1:nL){
+    yL[i] ~ dnorm(muL, 1/sigmaL^2)
+  }
+  for (i in 1:nH){
+    yH[i] ~ dnorm(muH, 1/sigmaH^2)
+  }
+  deltaPrior ~ dnorm(0, 1/priorSD^2)
+}

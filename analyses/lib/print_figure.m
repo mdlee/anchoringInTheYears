@@ -14,6 +14,11 @@ if ~isfolder(epsDir)
 end
 
 print(gcf, fullfile(pngDir, [stem '.png']), '-dpng', '-r200');
-print(gcf, fullfile(epsDir, [stem '.eps']), '-depsc');
+% Prefer OpenGL so FaceAlpha CI patches survive in EPS (painters drops them)
+try
+    print(gcf, fullfile(epsDir, [stem '.eps']), '-depsc', '-opengl');
+catch
+    print(gcf, fullfile(epsDir, [stem '.eps']), '-depsc');
+end
 fprintf('Wrote %s/{png,eps}/%s\n', outDir, stem);
 end

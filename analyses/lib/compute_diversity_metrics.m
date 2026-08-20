@@ -5,14 +5,18 @@ if nargin < 5
 end
 rng(1);
 
-yHiLo = [yHi, yLo];
+yHiLo = [yHi(:)', yLo(:)'];
+yNo = yNo(:)';
 truth = truth(1);
 
 M.epsilon2HL = mean((yHiLo - truth).^2);
-M.epsilon2N = mean((yNo - truth).^2);
-
 nHL = numel(yHiLo);
 nN = numel(yNo);
+if nN == 0
+    M.epsilon2N = NaN;
+else
+    M.epsilon2N = mean((yNo - truth).^2);
+end
 
 M.omegaHL = nan(nHL, nReps);
 M.deltaHL = nan(nHL, nReps);

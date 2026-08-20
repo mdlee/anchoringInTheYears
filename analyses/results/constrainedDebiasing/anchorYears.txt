@@ -1,22 +1,18 @@
 Event-years (Lee & Dang): constrained debiasing model comparison
-Performance = RMSE across questions of the estimate vector vs truth
-(same aggregate metric as the manuscript performance figure).
+Performance = RMSE across questions of the estimate vector vs truth.
 
 Model variants
-  full                 person-specific expertise (sigma) and anchoring (alpha)
-  expertise only       alpha fixed at 0 (no anchoring adjustment)
-  anchoring only       shared expertise (common sigma), person-specific alpha
-  full, anchored only  full model fit using only low/high-anchor individuals
+  anchoring model                 person-specific expertise (sigma) and anchoring (alpha)
+  expertise only                  alpha fixed at 0 (no anchoring adjustment)
+  anchoring only                  shared expertise (common sigma), person-specific alpha
+  anchoring model, anchored only  full model fit using only low/high-anchor individuals
 
-Baselines (data averages)
-  full crowd RMSE:            5.4334
-  anchored crowd RMSE:        3.6559
-  no-anchor crowd RMSE:      11.3153
-
-Models
-  model                            RMSE   vs full model   vs full crowd  vs anchor crowd
-  ------------------------------------------------------------------------------------------
-  full                             2.1855        0.0000         -3.2479         -1.4704
-  expertise only (alpha=0)         1.7633       -0.4222         -3.6701         -1.8926
-  anchoring only (common sigma)    7.0181        4.8326          1.5847          3.3622
-  full, anchored individuals only  1.8342       -0.3512         -3.5991         -1.8216
+  method                              RMSE
+  ---------------------------------------------
+  full crowd                          5.4334
+  anchor crowd                        3.6559
+  no-anchor crowd                     11.3153
+  anchoring model                     2.1855
+  expertise only                      1.7633
+  anchoring only                      7.0181
+  anchoring model, anchored only      1.8342

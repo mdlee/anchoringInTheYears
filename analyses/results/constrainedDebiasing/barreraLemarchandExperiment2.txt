@@ -1,22 +1,18 @@
 Barrera-Lemarchand Exp 2: constrained debiasing model comparison
-Performance = RMSE across questions of the estimate vector vs truth
-(same aggregate metric as the manuscript performance figure).
+Performance = RMSE across questions of the estimate vector vs truth.
 
 Model variants
-  full                 person-specific expertise (sigma) and anchoring (alpha)
-  expertise only       alpha fixed at 0 (no anchoring adjustment)
-  anchoring only       shared expertise (common sigma), person-specific alpha
-  full, anchored only  full model fit using only low/high-anchor individuals
+  anchoring model                 person-specific expertise (sigma) and anchoring (alpha)
+  expertise only                  alpha fixed at 0 (no anchoring adjustment)
+  anchoring only                  shared expertise (common sigma), person-specific alpha
+  anchoring model, anchored only  full model fit using only low/high-anchor individuals
 
-Baselines (data averages)
-  full crowd RMSE:           17.0608
-  anchored crowd RMSE:       16.9028
-  no-anchor crowd RMSE:      17.7040
-
-Models
-  model                            RMSE   vs full model   vs full crowd  vs anchor crowd
-  ------------------------------------------------------------------------------------------
-  full                             16.7126        0.0000         -0.3482         -0.1903
-  expertise only (alpha=0)         16.8752        0.1627         -0.1856         -0.0276
-  anchoring only (common sigma)    16.8439        0.1313         -0.2169         -0.0589
-  full, anchored individuals only  16.4857       -0.2269         -0.5751         -0.4172
+  method                              RMSE
+  ---------------------------------------------
+  full crowd                          17.0608
+  anchor crowd                        16.9028
+  no-anchor crowd                     17.7040
+  anchoring model                     16.7126
+  expertise only                      16.8752
+  anchoring only                      16.8439
+  anchoring model, anchored only      16.4857

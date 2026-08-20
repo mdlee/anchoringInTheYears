@@ -1,0 +1,42 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2024 The MathWorks, Inc.
+             R2024b Update 5 (24.2.0.2863752) 64-bit (glnxa64)
+                              January 31, 2025
+
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+Fitting aggregate L–R difference BF model
+  nL=98  nH=56  observed mean(H)-mean(L)=3.882  priorSD=20.0
+JAGS took 2.3 seconds.
+Saved /home/mdlee/Dropbox/GitHub/anchoringInTheYears/models/anchoringIndex/storage/aggregateLR_percentageEstimationF2025_jags.mat
+Convergence statistics:
+No GR statistics were over 1.05; highest Rhat was 1.00006.
+COGS140J F2025/W2024 percentageEstimation: aggregate L vs R mean difference
+
+Aggregation
+  Within each person, mean estimate across all questions.
+  Between groups: slider left / 0% (version 1) vs slider right / 100% (version 2).
+  W2024 no-anchor participants excluded.
+
+Model
+  yL ~ N(muL, sigmaL^2),  yH ~ N(muH, sigmaH^2)
+  delta = muH - muL,  delta ~ N(0, priorSD^2) under H1
+  Savage–Dickey BF for H0: delta = 0 vs that H1 prior.
+
+  nL (left/0%)                         98
+  nH (right/100%)                       56
+  observed mean L                       48.2955
+  observed mean H                       52.1779
+  observed difference (H - L)           3.8823
+  prior SD for delta under H1           20.0
+
+  posterior mean delta                  3.8717
+  95% CI                                [1.4201, 6.3227]
+  BF_10 (delta != 0 vs delta = 0)       7.35
+
+Loaded /home/mdlee/Dropbox/GitHub/anchoringInTheYears/models/anchoringIndex/storage/aggregateLR_percentageEstimationF2025_jags.mat
+Wrote /home/mdlee/Dropbox/GitHub/anchoringInTheYears/analyses/results/aggregateAnchorBF/percentageEstimationF2025.txt
+aggregate_bf_done

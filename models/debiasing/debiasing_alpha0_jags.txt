@@ -1,0 +1,20 @@
+# Expertise-only model: person-specific sigma, anchoring fixed at zero
+data{
+  T = length(y)
+  nQuestions = max(question)
+  nParticipants = max(participant)
+  lo = min(y)
+  hi = max(y)
+}
+model{
+  for (q in 1:nQuestions){
+    mu[q] ~ dunif(lo, hi)
+  }
+  for (p in 1:nParticipants){
+    sigma[p] ~ dunif(0.01, hi-lo)
+  }
+  for (t in 1:T){
+    muPrime[t] ~ dnorm(mu[question[t]], 1/sigma[participant[t]]^2)
+    y[t] ~ dnorm(muPrime[t], 1)
+  }
+}
