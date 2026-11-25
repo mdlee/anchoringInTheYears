@@ -3,3 +3,16 @@ storage/
 manuscript/
 literature/
 .venv/
+
+# Percentage-estimation materials (not in the paper)
+**/percentageEstimation*
+*percentageEstimation*
+data/run_percentageEstimationF2025.m
+run_percentageEstimationF2025.m
+models/anchoringIndex/anchoringIndex_percentageEstimationF2025.m
+models/debiasing/debiasing_percentageEstimationF2025.m
+
+# Local junk / logs
+data/testwrite.txt
+*.log
+analyses/results/*.log
