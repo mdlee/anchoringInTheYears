@@ -1,0 +1,28 @@
+COGS140J F2026 event-years: anchoring model vs anchor crowd
+Absolute error |estimate - truth| per question.
+anchor crowd = mean of low- and high-anchor estimates for that question.
+anchoring model = posterior mean of mu_q.
+MCMC: /home/mdlee/Dropbox/GitHub/anchoringInTheYears/models/debiasing/storage/debiasing_anchorYearsF2026_jags.mat
+
+Q    label                           truth     anchor      model     |errA|     |errM| modelWin
+--------------------------------------------------------------------------------------------------------
+1    Thriller                      1983.00    1987.64    1986.08       4.64       3.08        1
+2    Internet                      1983.00    1985.54    1982.03       2.54       0.97        1
+3    Disneyland                    1955.00    1968.29    1960.91      13.29       5.91        1
+4    Great Depression              1929.00    1933.97    1928.53       4.97       0.47        1
+5    iPhone                        2007.00    2006.02    2006.48       0.98       0.52        1
+6    Firefox                       2004.00    1997.34    2000.25       6.66       3.75        1
+7    Youtube                       2005.00    2004.70    2004.35       0.30       0.65        0
+8    McDonald's                    1955.00    1959.75    1957.58       4.75       2.58        1
+9    Revolutionary War             1775.00    1798.70    1776.72      23.70       1.72        1
+10   Reagan                        1981.00    1981.82    1981.86       0.82       0.86        0
+11   Pixar                         1995.00    1987.99    1993.59       7.01       1.41        1
+
+Summary
+  Questions:              11
+  Model better (abs err): 9 / 11
+  Ties / worse:          2
+  anchor crowd RMSE:      9.0903
+  anchoring model RMSE:   2.5701
+
+Claim check: NO — model not better on question(s): [7 10]

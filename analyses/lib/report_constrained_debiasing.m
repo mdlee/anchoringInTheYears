@@ -88,6 +88,25 @@ switch dataTag
         noAnchorGroupLong = 3;
         anchoredGroupLong = [1 2];
 
+    case 'anchorYearsF2026'
+        load(fullfile(dataDir, 'anchorYearsF2026.mat'), 'd');
+        fileStem = 'anchorYearsF2026';
+        titleLine = 'COGS140J F2026 event-years: constrained debiasing model comparison';
+        fullCandidates = {
+            'debiasing_anchorYearsF2026_jags.mat'
+            };
+        expertiseCandidates = {
+            'debiasing_alpha0_anchorYearsF2026_jags.mat'
+            };
+        anchoringCandidates = {
+            'debiasing_commonSigma_anchorYearsF2026_jags.mat'
+            };
+        anchoredOnlyCandidates = {
+            'debiasing_anchorYearsF2026AnchoredOnly_jags.mat'
+            };
+        noAnchorGroupLong = 3;
+        anchoredGroupLong = [1 2];
+
     otherwise
         error('report_constrained_debiasing:UnknownData', 'Unknown dataTag: %s', dataTag);
 end

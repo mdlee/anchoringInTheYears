@@ -1,0 +1,28 @@
+# Anchoring index on a year scale.
+# anchorHi and anchorLo are supplied as data (one high and one low anchor).
+# No hard truncation: the percentage-scale fits showed T(lo, hi) with a wide
+# sigma made A poorly identified, and a fixed ceiling at 2024 does not fit
+# a later cohort.
+data{
+  lo = min(min(yH), min(yL))
+  hi = max(max(yH), max(yL))
+  mn = mean(c(mean(yH), mean(yL)))
+  nH = length(yH)
+  nL = length(yL)
+}
+model{
+  mu ~ dnorm(mn, 1/(hi-lo)^2)
+  A ~ dnorm(0.3, 1/0.5^2)
+  delta = A*(anchorHi - anchorLo)
+  muH = mu + delta/2
+  sigmaH ~ dunif(0.01, hi-lo)
+  for (i in 1:nH){
+    yH[i] ~ dnorm(muH, 1/sigmaH^2)
+  }
+  muL = mu - delta/2
+  sigmaL ~ dunif(0.01, hi-lo)
+  for (i in 1:nL){
+    yL[i] ~ dnorm(muL, 1/sigmaL^2)
+  }
+  Aprior ~ dnorm(0.3, 1/0.5^2)
+}

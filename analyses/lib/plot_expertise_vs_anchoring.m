@@ -21,6 +21,11 @@ switch dataset
         anchoredGroup = 2;
         noAnchorGroup = 1;  % W2024 no-anchor
         xMaxFloor = 1;
+    case 'anchorYearsF2026'
+        jagsCandidates = {'debiasing_anchorYearsF2026_jags.mat'};
+        anchoredGroup = 12;
+        noAnchorGroup = 3;
+        xMaxFloor = 75;
     otherwise
         error('Unknown dataset %s', dataset);
 end

@@ -29,6 +29,9 @@ dRaw = Sraw.d;
 dRaw.truth(6) = 2004; % same Firefox correction as parseAnchoryears_1.m
 
 outTxt = fullfile(outDir, 'contaminantVsOutlier.txt');
+% Keep any existing F2026 section so original regen does not drop replication.
+f2026Block = extract_f2026_outlier_section(outTxt);
+
 fid = fopen(outTxt, 'w');
 if fid < 0
     error('Could not open %s for writing', outTxt);
@@ -37,7 +40,7 @@ cleanupObj = onCleanup(@() fclose(fid)); %#ok<NASGU>
 
 writef = @(varargin) local_writef(fid, varargin{:});
 
-writef('\n========== outlierRuleComparison ==========\n');
+writef('\n========== ORIGINAL event-years outlierRuleComparison ==========\n');
 writef('Parse rule: mean+/-3SD per question; second pass on Q8,Q11\n');
 writef('IQR rule:   outside [Q1-1.5*IQR, Q3+1.5*IQR] per question\n');
 
@@ -194,7 +197,13 @@ for questionIdx = 1:dRaw.nQuestions
             numel(yRaw), numel(yP), numel(yI));
     end
 end
-writef('\n========== end outlierRuleComparison ==========\n');
+writef('\n========== end ORIGINAL event-years outlierRuleComparison ==========\n');
+if ~isempty(f2026Block)
+    writef('\n%s', f2026Block);
+    if f2026Block(end) ~= newline
+        writef('\n');
+    end
+end
 
 fprintf('Wrote %s\n', outTxt);
 
@@ -225,4 +234,23 @@ end
 function local_writef(fid, varargin)
 fprintf(varargin{:});
 fprintf(fid, varargin{:});
+end
+
+
+function block = extract_f2026_outlier_section(outTxt)
+block = '';
+if ~isfile(outTxt)
+    return;
+end
+txt = fileread(outTxt);
+startTok = '========== F2026 replication outlierRuleComparison ==========';
+idx = strfind(txt, startTok);
+if isempty(idx)
+    return;
+end
+block = txt(idx(1):end);
+block = strtrim(block);
+if ~isempty(block) && block(end) ~= newline
+    block = [block newline];
+end
 end

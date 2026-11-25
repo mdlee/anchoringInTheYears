@@ -1,0 +1,69 @@
+Original event-years: subjective anchors as percentiles of the no-anchor distribution
+====================================================================================
+
+Purpose: for each original (subjectively chosen) low/high anchor, report where that
+value falls in the empirical distribution of no-anchor estimates for the same question.
+This answers the R2 reviewer request to compare subjective anchors to percentile-based
+anchors (e.g., Barrera Experiment 2 used 5% and 95%; F2026 replication used 1st/99th).
+
+Data: data/anchorYearsDecontaminatedLong.csv
+No-anchor cohort: version == 3 (after contaminant removal).
+Anchor values: original Low/High from manuscript Table 1.
+
+Percentile definitions:
+  midrank_pct = 100 * (#estimates < anchor + 0.5 * #estimates == anchor) / n
+  cdf_pct     = 100 * (#estimates <= anchor) / n
+Primary reported value is midrank_pct (standard percentile rank).
+
+Note: Firefox truth in the long CSV is [2002.0]; manuscript uses 2004.
+      Percentiles below use estimates only (truth not needed).
+
+Question               Truth Anchor Side   n    min    max    mid%    cdf%  #<  #=  #<=
+---------------------------------------------------------------------------------------
+Revolutionary War       1775   1730 Low   41   1700   1890     8.5    12.2   2   3    5
+Revolutionary War       1775   1820 High  41   1700   1890    85.4    85.4  35   0   35
+Great Depression        1929   1910 Low   43   1905   1980     3.5     4.7   1   1    2
+Great Depression        1929   1950 High  43   1905   1980    83.7    83.7  36   0   36
+Disneyland              1955   1920 Low   47   1923   2013     0.0     0.0   0   0    0
+Disneyland              1955   1980 High  47   1923   2013    57.4    59.6  26   2   28
+McDonald's              1955   1920 Low   47   1920   2004     2.1     4.3   0   2    2
+McDonald's              1955   1980 High  47   1920   2004    77.7    78.7  36   1   37
+Reagan                  1981   1960 Low   47   1950   2010     7.4    10.6   2   3    5
+Reagan                  1981   2000 High  47   1950   2010    88.3    89.4  41   1   42
+Thriller                1983   1970 Low   47   1975   2003     0.0     0.0   0   0    0
+Thriller                1983   1990 High  47   1975   2003    61.7    66.0  27   4   31
+Internet                1983   1960 Low   45   1950   2004     6.7     8.9   2   2    4
+Internet                1983   1990 High  45   1950   2004    74.4    82.2  30   7   37
+Pixar                   1995   1990 Low   44   1960   2009    28.4    34.1  10   5   15
+Pixar                   1995   2000 High  44   1960   2009    81.8    84.1  35   2   37
+Firefox                 2004   1970 Low   47   1974   2010     0.0     0.0   0   0    0
+Firefox                 2004   2010 High  47   1974   2010    98.9   100.0  46   1   47
+YouTube                 2005   1990 Low   46   1995   2011     0.0     0.0   0   0    0
+YouTube                 2005   2010 High  46   1995   2011    95.7    97.8  43   2   45
+iPhone                  2007   1990 Low   47   1998   2012     0.0     0.0   0   0    0
+iPhone                  2007   2010 High  47   1998   2012    94.7    97.9  43   3   46
+
+Compact Table-1 companion (midrank percentiles of original anchors in no-anchor group)
+------------------------------------------------------------------------------------
+Question               Truth    Low    Low%   High   High%
+------------------------------------------------------------
+Revolutionary War       1775   1730    8.5%   1820   85.4%
+Great Depression        1929   1910    3.5%   1950   83.7%
+Disneyland              1955   1920    0.0%   1980   57.4%
+McDonald's              1955   1920    2.1%   1980   77.7%
+Reagan                  1981   1960    7.4%   2000   88.3%
+Thriller                1983   1970    0.0%   1990   61.7%
+Internet                1983   1960    6.7%   1990   74.4%
+Pixar                   1995   1990   28.4%   2000   81.8%
+Firefox                 2004   1970    0.0%   2010   98.9%
+YouTube                 2005   1990    0.0%   2010   95.7%
+iPhone                  2007   1990    0.0%   2010   94.7%
+
+Interpretation notes
+--------------------
+- A Low% near 5 and High% near 95 would resemble Barrera Experiment 2 anchor placement.
+- A Low% near 1 and High% near 99 would resemble the F2026 replication anchor rule.
+- Subjective original anchors are often well inside the no-anchor range (not as extreme
+  as 1st/99th), especially on the high side for recent events.
+
+Regenerate: python3 analyses/lib/report_original_anchor_percentiles.py

@@ -1,11 +1,15 @@
-function outFiles = fit_constrained_debiasing(forceRefit)
+function outFiles = fit_constrained_debiasing(forceRefit, dataName)
 %FIT_CONSTRAINED_DEBIASING Fit expertise-only (alpha=0) and anchoring-only
 % (common sigma) variants. Saves under models/debiasing/storage/.
 %
-% By default fits percentageEstimationF2025 (F2025 slider + W2024 no-anchor).
+% dataName defaults to percentageEstimationF2025 (F2025 slider + W2024 no-anchor).
+% Pass 'anchorYearsF2026' to fit the F2026 event-years files instead.
 
 if nargin < 1
     forceRefit = false;
+end
+if nargin < 2 || isempty(dataName)
+    dataName = 'percentageEstimationF2025';
 end
 
 thisDir = fileparts(mfilename('fullpath'));
@@ -29,7 +33,23 @@ jobs = {
         'variant', 'commonSigma', ...
         'csv', fullfile(repoRoot, 'data', 'percentageEstimationF2025Long.csv'), ...
         'nSamples', 2e4)
+    struct('dataName', 'anchorYearsF2026', ...
+        'variant', 'alpha0', ...
+        'csv', fullfile(repoRoot, 'data', 'anchorYearsF2026Long.csv'), ...
+        'nSamples', 2e4)
+    struct('dataName', 'anchorYearsF2026', ...
+        'variant', 'commonSigma', ...
+        'csv', fullfile(repoRoot, 'data', 'anchorYearsF2026Long.csv'), ...
+        'nSamples', 2e4)
     };
+keepJob = false(1, numel(jobs));
+for j = 1:numel(jobs)
+    keepJob(j) = strcmp(jobs{j}.dataName, dataName);
+end
+jobs = jobs(keepJob);
+if isempty(jobs)
+    error('No constrained-debiasing jobs for %s', dataName);
+end
 
 outFiles = {};
 for j = 1:numel(jobs)

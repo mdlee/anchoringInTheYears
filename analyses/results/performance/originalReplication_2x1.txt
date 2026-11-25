@@ -1,0 +1,7 @@
+original vs replication (2x1): WOC / debiasing RMSE
+Replication shares the original no-anchor cohort for the histogram
+and for no-anchor / full-crowd aggregates.
+
+dataset              full     anchor    no-anchor  debiasing
+original             5.43       3.66        11.32       2.19 [1.56, 3.16]
+replication          9.84       9.09        11.32       3.98 [1.77, 9.00]

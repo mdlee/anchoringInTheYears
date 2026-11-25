@@ -1,0 +1,18 @@
+COGS140J F2026 event-years: constrained debiasing model comparison
+Performance = RMSE across questions of the estimate vector vs truth.
+
+Model variants
+  anchoring model                 person-specific expertise (sigma) and anchoring (alpha)
+  expertise only                  alpha fixed at 0 (no anchoring adjustment)
+  anchoring only                  shared expertise (common sigma), person-specific alpha
+  anchoring model, anchored only  full model fit using only low/high-anchor individuals
+
+  method                              RMSE
+  ---------------------------------------------
+  full crowd                          7.9444
+  anchor crowd                        9.0903
+  no-anchor crowd                     6.9793
+  anchoring model                     2.5701
+  expertise only                      2.4001
+  anchoring only                      9.7778
+  anchoring model, anchored only      3.5511

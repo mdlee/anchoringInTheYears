@@ -52,6 +52,15 @@ switch dataTag
         titleLine = 'COGS140J F2025 percentageEstimation: anchoring model vs anchor crowd';
         anchoredGroups = [1 2];
 
+    case 'anchorYearsF2026'
+        load(fullfile(dataDir, 'anchorYearsF2026.mat'), 'd');
+        jagsCandidates = {
+            'debiasing_anchorYearsF2026_jags.mat'
+            };
+        fileStem = 'anchorYearsF2026';
+        titleLine = 'COGS140J F2026 event-years: anchoring model vs anchor crowd';
+        anchoredGroups = [1 2];
+
     otherwise
         error('report_debiasing_vs_anchored_per_question:UnknownData', ...
             'Unknown dataTag: %s', dataTag);

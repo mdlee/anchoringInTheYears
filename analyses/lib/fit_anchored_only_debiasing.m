@@ -1,11 +1,16 @@
-function outFiles = fit_anchored_only_debiasing(forceRefit)
+function outFiles = fit_anchored_only_debiasing(forceRefit, dataName)
 %FIT_ANCHORED_ONLY_DEBIASING Fit the full debiasing model on anchored data only.
 % Saves under models/debiasing/storage/ so analyses/find_mcmc_storage can find it.
 %
 % Event years and Barrera Exp 2: keep trials with version ~= 3 (no-anchor).
+% Pass dataName to fit one dataset. The default (omitted) refits the original
+% three and leaves anchorYearsF2026 alone.
 
 if nargin < 1
     forceRefit = false;
+end
+if nargin < 2
+    dataName = '';
 end
 
 thisDir = fileparts(mfilename('fullpath'));
@@ -32,7 +37,23 @@ jobs = {
     struct('dataName', 'percentageEstimationF2025AnchoredOnly', ...
         'csv', fullfile(repoRoot, 'data', 'percentageEstimationF2025Long.csv'), ...
         'nSamples', 2e4)
+    struct('dataName', 'anchorYearsF2026AnchoredOnly', ...
+        'csv', fullfile(repoRoot, 'data', 'anchorYearsF2026Long.csv'), ...
+        'nSamples', 2e4)
     };
+if isempty(dataName)
+    keepJob = true(1, numel(jobs));
+    keepJob(end) = false;
+else
+    keepJob = false(1, numel(jobs));
+    for j = 1:numel(jobs)
+        keepJob(j) = strcmp(jobs{j}.dataName, dataName);
+    end
+end
+jobs = jobs(keepJob);
+if isempty(jobs)
+    error('No anchored-only debiasing job for %s', dataName);
+end
 
 outFiles = {};
 for j = 1:numel(jobs)

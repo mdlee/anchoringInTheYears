@@ -4,6 +4,7 @@ fineTune.font.diversityPredictionTheorem = 24;
 fineTune.font.anchoringIndex       = 24;
 fineTune.font.allQanchoring        = 24;
 fineTune.font.allQanchoringBarrera = 18;
+fineTune.font.allQanchoringReplication = 18;  % original vs F2026 forest
 fineTune.font.performance          = 16;
 fineTune.font.debiasingModel       = 20;
 fineTune.font.expertiseVsAnchoring = 16;

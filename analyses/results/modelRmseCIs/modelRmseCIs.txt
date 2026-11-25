@@ -1,0 +1,15 @@
+Model RMSE point estimates and 95% credible intervals
+
+label                       point      CI_lo      CI_hi  file
+orig_full                  2.1855     1.5583     3.1629  /home/mdlee/Dropbox/GitHub/anchoringInTheYears/models/debiasing/storage/debiasing_anchorYears_jags.mat
+orig_expertise             1.7633     1.2502     2.5462  /home/mdlee/Dropbox/CC2/code/anchorYears/storage/anchorYears_alpha0_anchorYears_jags.mat
+orig_anchoring             7.0181     6.1304     8.2903  /home/mdlee/Dropbox/CC2/code/anchorYears/storage/anchorYears_commonSigma_anchorYears_jags.mat
+orig_anchoredOnly          1.8342     1.0062     3.4380  /home/mdlee/Dropbox/GitHub/anchoringInTheYears/models/debiasing/storage/debiasing_anchorYearsAnchoredOnly_jags.mat
+rep_full                   3.9758     1.7680     9.0024  /home/mdlee/Dropbox/GitHub/anchoringInTheYears/models/debiasing/storage/debiasing_anchorYearsF2026_jags.mat
+rep_expertise              1.9053     1.3121     3.4847  /home/mdlee/Dropbox/GitHub/anchoringInTheYears/models/debiasing/storage/debiasing_alpha0_anchorYearsF2026_jags.mat
+rep_anchoring             15.8609    13.8038    18.7693  /home/mdlee/Dropbox/GitHub/anchoringInTheYears/models/debiasing/storage/debiasing_commonSigma_anchorYearsF2026_jags.mat
+rep_anchoredOnly           3.3600     1.5114     9.3952  /home/mdlee/Dropbox/GitHub/anchoringInTheYears/models/debiasing/storage/debiasing_anchorYearsF2026AnchoredOnly_jags.mat
+barrera_full              16.7126    16.1999    17.4062  /home/mdlee/Dropbox/GitHub/anchoringInTheYears/models/debiasing/storage/debiasing_barreraEtAlExperiment2_jags.mat
+barrera_expertise         16.8752    16.4134    17.4699  /home/mdlee/Dropbox/CC2/code/anchorYears/storage/debiasingNavajas_alpha0_navajasExperiment2_jags.mat
+barrera_anchoring         16.8439    16.3429    17.5040  /home/mdlee/Dropbox/CC2/code/anchorYears/storage/debiasingNavajas_commonSigma_navajasExperiment2_jags.mat
+barrera_anchoredOnly      16.4857    15.8675    17.5662  /home/mdlee/Dropbox/GitHub/anchoringInTheYears/models/debiasing/storage/debiasing_barreraEtAlExperiment2AnchoredOnly_jags.mat

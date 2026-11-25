@@ -1,0 +1,18 @@
+COGS140J F2026 event-years: individual-error and diversity cases
+Anchor crowd = F2026 low and high anchors (percentile anchors).
+No-anchor crowd = the original event-years no-anchor group.
+Squared-error decomposition: individual error = crowd error + diversity.
+A positive change means the anchor crowd is larger than the no-anchor crowd.
+
+Question                 dInd       dDiv     dCrowd        ind        div      crowd  Case
+Thriller                 22.3       38.6      -16.3         up         up       down  diversity gain outweighs the rise in individual error
+Internet                 75.9       70.3        5.5         up         up         up  rise in individual error outweighs the diversity gain
+Disneyland              167.2      338.6     -171.4         up         up       down  diversity gain outweighs the rise in individual error
+Great Depression         21.0       29.0       -8.0         up         up       down  diversity gain outweighs the rise in individual error
+iPhone                    1.7        2.5       -0.8         up         up       down  diversity gain outweighs the rise in individual error
+Firefox                  69.7       65.6        4.1         up         up         up  rise in individual error outweighs the diversity gain
+Youtube                  -0.8       -0.2       -0.6       down       down       down  drop in individual error outweighs the loss of diversity
+McDonald's               73.3       95.4      -22.1         up         up       down  diversity gain outweighs the rise in individual error
+Revolutionary War      2041.5     1498.8      542.7         up         up         up  rise in individual error outweighs the diversity gain
+Reagan                   30.4       30.3        0.1         up         up         up  rise in individual error outweighs the diversity gain
+Pixar                   211.3      171.4       39.9         up         up         up  rise in individual error outweighs the diversity gain

@@ -1,4 +1,4 @@
-========== outlierRuleComparison ==========
+========== ORIGINAL event-years outlierRuleComparison ==========
 Parse rule: mean+/-3SD per question; second pass on Q8,Q11
 IQR rule:   outside [Q1-1.5*IQR, Q3+1.5*IQR] per question
 Raw observations (pre-parse): 2134
@@ -126,4 +126,77 @@ Pixar                1      1989.1   1989.1   1990.9   (n=73/73/69)
 Pixar                2      1994.9   1994.9   1995.5   (n=73/73/72)
 Pixar                3      1949.0   1992.0   1993.3   (n=48/44/42)
 
-========== end outlierRuleComparison ==========
+========== end ORIGINAL event-years outlierRuleComparison ==========
+
+========== F2026 replication outlierRuleComparison ==========
+COGS140J F2026 event-years: contaminant removal
+Same 11 questions as the original event-years study.
+Anchors are the 1st and 99th percentiles of that study's no-anchor group.
+Parse rule: mean +/- 3 SD per question, both F2026 forms pooled;
+            second pass on Q8 (McDonald's) and Q11 (Pixar).
+IQR rule:   outside [Q1 - 1.5*IQR, Q3 + 1.5*IQR] per question (comparison only).
+Kept data use the parse rule. The original no-anchor cohort is not re-screened.
+
+Consented participants: 92
+Finite answers before the parse: 920
+
+Per-question counts:
+Question                 n Parse   IQR  Both Ponly Ionly      IQR_lo     IQR_hi
+Thriller                83     0     0     0     0     0      1958.4     2019.4
+Internet                83     1     2     1     0     1      1933.0     2035.0
+Disneyland              86     1     1     1     0     0      1873.0     2073.0
+Great Depression        82     3    10     3     0     7      1897.5     1965.5
+iPhone                  82     1     2     1     0     1      1995.5     2015.5
+Firefox                 88     1     1     1     0     0      1967.5     2027.5
+Youtube                 85     2     3     2     0     1      1993.9     2014.9
+McDonald's              86     2     2     2     0     0      1887.5     2035.5
+Revolutionary War       84     0     6     0     0     6      1700.0     1900.0
+Reagan                  82     0     3     0     0     3      1955.0     2011.0
+Pixar                   79     1     4     1     0     3      1950.0     2030.0
+
+Overall:
+  Parse outliers     = 12  (kept 908)
+  IQR outliers       = 34  (kept 886)
+  Both methods       = 12
+  Parse only         = 0
+  IQR only           = 22
+  Agreement on flag  = 898 / 920 (97.6%)
+
+Removed by the parse rule:
+  Q7  Youtube             est=1989  form=1  person=1
+  Q5  iPhone              est=1980  form=1  person=2
+  Q2  Internet            est=95  form=1  person=22
+  Q3  Disneyland          est=65  form=1  person=22
+  Q6  Firefox             est=90  form=1  person=22
+  Q8  McDonald's          est=84  form=1  person=22
+  Q11 Pixar               est=90  form=1  person=22
+  Q4  Great Depression    est=1830  form=2  person=56
+  Q7  Youtube             est=1990  form=2  person=77
+  Q4  Great Depression    est=2008  form=2  person=84
+  Q8  McDonald's          est=1840  form=2  person=84
+  Q4  Great Depression    est=1840  form=2  person=86
+
+IQR-only (not removed; flagged by IQR but inside mean +/- 3 SD):
+  Q4  Great Depression    est=1990  form=1  person=2
+  Q9  Revolutionary War   est=1650  form=1  person=2
+  Q4  Great Depression    est=1970  form=1  person=3
+  Q4  Great Depression    est=1973  form=1  person=5
+  Q2  Internet            est=1930  form=1  person=8
+  Q4  Great Depression    est=1992  form=1  person=10
+  Q7  Youtube             est=1993  form=1  person=16
+  Q4  Great Depression    est=1970  form=1  person=30
+  Q4  Great Depression    est=1970  form=1  person=37
+  Q9  Revolutionary War   est=1967  form=1  person=37
+  Q10 Reagan              est=2014  form=1  person=37
+  Q5  iPhone              est=1995  form=1  person=43
+  Q9  Revolutionary War   est=1650  form=1  person=43
+  Q4  Great Depression    est=1880  form=2  person=53
+  Q11 Pixar               est=1940  form=2  person=53
+  Q9  Revolutionary War   est=1940  form=2  person=55
+  Q10 Reagan              est=1952  form=2  person=61
+  Q10 Reagan              est=1953  form=2  person=79
+  Q9  Revolutionary War   est=1920  form=2  person=83
+  Q11 Pixar               est=1943  form=2  person=85
+  Q9  Revolutionary War   est=1910  form=2  person=90
+  Q11 Pixar               est=1940  form=2  person=90
+========== end F2026 replication outlierRuleComparison ==========

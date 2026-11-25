@@ -1,0 +1,3 @@
+original event-years: WOC / debiasing RMSE
+
+full=5.43  anchor=3.66  no-anchor=11.32  debiasing=2.19 [1.56, 3.16]
