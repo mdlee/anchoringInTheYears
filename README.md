@@ -4,7 +4,7 @@ Code and data for:
 
 > Lee, M.D., & Dang, A. (2026). Comparing diversity and debiasing approaches to the wisdom of the crowd.
 
-This repository supports the event-years anchoring experiment (original + F2026 percentile-anchor replication) and a reanalysis of Experiment 2 from Barrera-Lemarchand et al. (2024). It contains long-format behavioral data, JAGS/MATLAB model scripts, result-generation code, and additional diagnostic outputs.
+This repository supports the event-years anchoring experiment (original and percentile-anchor replication) and a reanalysis of Experiment 2 from Barrera-Lemarchand et al. (2024). It contains long-format behavioral data, JAGS/MATLAB model scripts, result-generation code, and additional diagnostic outputs.
 
 Online materials that accompany the manuscript—extra figures, tables, and numerical reports—are collected under [Supplementary Analyses](#supplementary-analyses) below, with links into [`analyses/results/`](analyses/results/).
 
@@ -27,7 +27,7 @@ anchoringInTheYears/
 │       ├── expertiseVsAnchoring/
 │       ├── outlierRuleComparison/
 │       │   └── contaminantVsOutlier.txt
-│       ├── debiasingVsAnchoredPerQuestion/  # per-question anchoring model vs anchor crowd
+│       ├── debiasingVsAnchoredPerQuestion/  # per-question debiasing model vs anchor crowd
 │       ├── constrainedDebiasing/            # expertise-only / anchoring-only / anchored-only
 │       ├── modelRmseCIs/                    # model RMSE point + 95% CIs
 │       └── originalAnchorPercentiles/       # subjective anchors as no-anchor percentiles
@@ -57,7 +57,6 @@ Question IDs: 1 Thriller, 2 Internet, 3 Disneyland, 4 Great Depression, 5 iPhone
 Supporting mats used by analysis code:
 
 - `data/anchorYearsData.mat` — structured cleaned event-years data
-- `data/anchoring140JW2024.mat` — raw pre-parse source for outlier-rule comparison
 - `data/pantoneColors.mat` — shared figure colors
 
 ### Barrera-Lemarchand Experiment 2 (`data/barreraEtAlExperiment2Long.csv`)
@@ -92,64 +91,13 @@ Priors are scaled from the observed min/max/mean of the estimates for each quest
 
 Toggle `dataName` / CSV inside `debiasing.m` to fit event years or Barrera Exp 2.
 
-## Generating results — `analyses/analyses.m`
-
-Comment entries in/out of two cell arrays:
-
-```matlab
-dataList = {
-   'anchorYears'
-   'barrera'
-   };
-
-analysisList = {
-   'diversityPredictionTheorem'
-   'anchoringIndex'
-   'allQanchoring'
-   'performance'
-   'debiasingModel'
-   'expertiseVsAnchoring'
-   'outlierRuleComparison'
-   'debiasingVsAnchoredPerQuestion'
-   'constrainedDebiasing'
-   };
-```
-
-Font sizes and related styling live in the `%% Fine tune` block at the top of `analyses.m`.
-
-### Analysis → output folder
-
-| Analysis | Folder under `analyses/results/` | Notes |
-| --- | --- | --- |
-| `diversityPredictionTheorem` | `diversityPredictionTheorem/{png,eps}/` | Per-question two-panel DPT figures |
-| `anchoringIndex` | `anchoringIndex/{png,eps}/` | Firefox prior/posterior (event years) |
-| `allQanchoring` | `anchoringIndex/{png,eps}/` | Forest plots of anchoring indices (same folder) |
-| `performance` | `performance/{png,eps}/` | Crowd / model RMSE comparison |
-| `debiasingModel` | `debiasingModel/{png,eps}/` | Debiasing schematic |
-| `expertiseVsAnchoring` | `expertiseVsAnchoring/{png,eps}/` | Inferred expertise vs anchoring |
-| `outlierRuleComparison` | `outlierRuleComparison/` | Text report + optional bar chart; event years only |
-| `debiasingVsAnchoredPerQuestion` | `debiasingVsAnchoredPerQuestion/` | Text report: per-question \|err\| anchoring model vs anchor crowd |
-| `constrainedDebiasing` | `constrainedDebiasing/` | Text report: expertise-only / anchoring-only / anchored-only RMSE |
-
-`outlierRuleComparison` rebuilds raw long data from `anchoring140JW2024.mat` and compares the parse rule (mean ± 3 SD, second pass on McDonald's and Pixar) with classic 1.5 × IQR fences. Report: `contaminantVsOutlier.txt`.
-
-`debiasingVsAnchoredPerQuestion` compares the anchoring-model crowd estimate to the anchor crowd on each question for event years and Barrera Exp 2. Reports: `anchorYears.txt`, `barreraLemarchandExperiment2.txt`.
-
-`constrainedDebiasing` compares anchoring model, expertise-only (`alpha=0`), anchoring-only (common `sigma`), and anchoring-model-on-anchored-only fits against full / anchor / no-anchor crowd averages. Reports: `anchorYears.txt`, `barreraLemarchandExperiment2.txt`. Anchored-only fits can be produced with `analyses/lib/fit_anchored_only_debiasing.m`.
-
-### Dependencies for `analyses.m`
-
-- MATLAB with Trinity / JAGS sample mats available under model or analyses `storage/` (see `analyses/lib/find_mcmc_storage.m`)
-- Helpers `setFigure`, `moveAxis`, `Raxes` on the MATLAB path
-- Trinity `codatable` for summarizing MCMC chains
-
 ---
 
 ## Supplementary Analyses
 
 The main manuscript summarizes the primary analyses. Additional figures, tables, and numerical reports live under [`analyses/results/`](analyses/results/). This section collects that material: short context for each analysis, key results inlined where practical, and links to the source files.
 
-Filename tags used below: `anchorYears` / `AllQuestions` = original experiment; `anchorYearsF2026` = replication experiment; `barreraLemarchandExperiment2` = Barrera Exp 2.
+Filename tags used below: `anchorYears` / `AllQuestions` = original experiment; tags containing `F2026` = replication experiment; `barreraLemarchandExperiment2` = Barrera Exp 2.
 
 | Topic | Jump | Repository path |
 | --- | --- | --- |
@@ -171,12 +119,12 @@ The full debiasing model jointly infers person-specific expertise ($\sigma_i$) a
 
 | Variant | Restriction |
 | --- | --- |
-| Anchoring model (full) | Person-specific $\sigma_i$ and $\alpha_i$ |
+| Debiasing model (full) | Person-specific $\sigma_i$ and $\alpha_i$ |
 | Expertise only | $\alpha_i = 0$ (no anchoring adjustment) |
 | Anchoring only | Shared expertise (common $\sigma$), person-specific $\alpha_i$ |
-| Anchoring model, anchored only | Full model, low/high-anchor individuals only |
+| Debiasing model, anchored only | Full model, low/high-anchor individuals only |
 
-Model RMSE point estimates and 95% credible intervals are taken from [`modelRmseCIs/modelRmseCIs.txt`](analyses/results/modelRmseCIs/modelRmseCIs.txt) ([Model RMSE credible intervals](#model-rmse-credible-intervals)). Crowd baselines come from the plain dumps in the constrained-model folder. Note: the replication full-model RMSE in [`constrainedDebiasing/anchorYearsF2026.txt`](analyses/results/constrainedDebiasing/anchorYearsF2026.txt) (2.57) is outdated relative to the re-fit used in the manuscript and in `modelRmseCIs` (3.98).
+Model RMSE point estimates and 95% credible intervals are taken from [`modelRmseCIs/modelRmseCIs.txt`](analyses/results/modelRmseCIs/modelRmseCIs.txt) ([Model RMSE credible intervals](#model-rmse-credible-intervals)). Crowd baselines come from the plain dumps in the constrained-model folder.
 
 **Original experiment**
 
@@ -185,10 +133,10 @@ Model RMSE point estimates and 95% credible intervals are taken from [`modelRmse
 | Full crowd | RMSE 5.43 |
 | Anchor crowd | RMSE 3.66 |
 | No-anchor crowd | RMSE 11.32 |
-| Anchoring model (full) | RMSE 2.19 (95% CI = 1.56 to 3.16) |
+| Debiasing model (full) | RMSE 2.19 (95% CI = 1.56 to 3.16) |
 | Expertise only | RMSE 1.76 (95% CI = 1.25 to 2.55) |
 | Anchoring only | RMSE 7.02 (95% CI = 6.13 to 8.29) |
-| Full model, anchored only | RMSE 1.83 (95% CI = 1.01 to 3.44) |
+| Debiasing model, anchored only | RMSE 1.83 (95% CI = 1.01 to 3.44) |
 
 Source dump: [`constrainedDebiasing/anchorYears.txt`](analyses/results/constrainedDebiasing/anchorYears.txt)
 
@@ -198,10 +146,10 @@ Crowd baselines in the dual performance panel ([Performance summaries](#performa
 
 | Method | Result |
 | --- | --- |
-| Anchoring model (full) | RMSE 3.98 (95% CI = 1.77 to 9.00) |
+| Debiasing model (full) | RMSE 3.98 (95% CI = 1.77 to 9.00) |
 | Expertise only | RMSE 1.91 (95% CI = 1.31 to 3.48) |
 | Anchoring only | RMSE 15.86 (95% CI = 13.80 to 18.77) |
-| Full model, anchored only | RMSE 3.36 (95% CI = 1.51 to 9.40) |
+| Debiasing model, anchored only | RMSE 3.36 (95% CI = 1.51 to 9.40) |
 
 **Barrera Experiment 2**
 
@@ -210,10 +158,10 @@ Crowd baselines in the dual performance panel ([Performance summaries](#performa
 | Full crowd | RMSE 17.06 |
 | Anchor crowd | RMSE 16.90 |
 | No-anchor crowd | RMSE 17.70 |
-| Anchoring model (full) | RMSE 16.71 (95% CI = 16.20 to 17.41) |
+| Debiasing model (full) | RMSE 16.71 (95% CI = 16.20 to 17.41) |
 | Expertise only | RMSE 16.88 (95% CI = 16.41 to 17.47) |
 | Anchoring only | RMSE 16.84 (95% CI = 16.34 to 17.50) |
-| Full model, anchored only | RMSE 16.49 (95% CI = 15.87 to 17.57) |
+| Debiasing model, anchored only | RMSE 16.49 (95% CI = 15.87 to 17.57) |
 
 Source dump: [`constrainedDebiasing/barreraLemarchandExperiment2.txt`](analyses/results/constrainedDebiasing/barreraLemarchandExperiment2.txt).
 
@@ -249,15 +197,13 @@ Every parse removal is also an IQR flag. The IQR rule alone would additionally d
 
 **Folder:** [`analyses/results/debiasingVsAnchoredPerQuestion/`](analyses/results/debiasingVsAnchoredPerQuestion/)
 
-Aggregate RMSE favors the anchoring (debiasing) model over the anchored-crowd mean. These reports break that comparison down question by question. Absolute error is $|\mathrm{estimate} - \mathrm{truth}|$; the anchor crowd is the mean of low- and high-anchor estimates; the model estimate is the posterior mean of $\mu_q$.
+Aggregate RMSE favors the debiasing model over the anchored-crowd mean. These reports break that comparison down question by question. Absolute error is $|\mathrm{estimate} - \mathrm{truth}|$; the anchor crowd is the mean of low- and high-anchor estimates; the model estimate is the posterior mean of $\mu_q$.
 
 | Dataset | Model better | Anchor-crowd RMSE | Model RMSE |
 | --- | --- | ---: | --- |
 | Original experiment | **9 / 11** (worse: Disneyland, McDonald’s) | 3.66 | 2.19 (95% CI = 1.56 to 3.16) |
-| Replication experiment | **9 / 11** (worse: YouTube, Reagan) | 9.09 | 3.98† (95% CI = 1.77 to 9.00) |
+| Replication experiment | **9 / 11** (worse: YouTube, Reagan) | 9.09 | 3.98 (95% CI = 1.77 to 9.00) |
 | Barrera Exp 2 | **20 / 30** | 16.90 | 16.71 (95% CI = 16.20 to 17.41) |
-
-†Per-question abs.\ errors and win counts are from [`anchorYearsF2026.txt`](analyses/results/debiasingVsAnchoredPerQuestion/anchorYearsF2026.txt). That file’s aggregate model RMSE (2.57) is outdated; use 3.98 from [Performance summaries](#performance-summaries) / [Model RMSE credible intervals](#model-rmse-credible-intervals).
 
 **Original experiment** ([`anchorYears.txt`](analyses/results/debiasingVsAnchoredPerQuestion/anchorYears.txt))
 
