@@ -96,8 +96,8 @@ fineTune.performance.font.axis = 16;        % main histogram axis tick labels
 fineTune.performance.font.xlabel = 18;      % "Root Mean Squared Error"
 fineTune.performance.font.crowdLabel = 16;  % full/anchor/no-anchor/model vertical labels
 fineTune.performance.font.insetAxis = 16;   % inset tick labels
-fineTune.performance.font.insetLabel = 16;  % inset xlabel / ylabel
-fineTune.performance.font.insetCorr = 16;   % r= annotation
+fineTune.performance.font.insetLabel = 18;  % inset xlabel / ylabel
+fineTune.performance.font.insetCorr = 18;   % r= annotation
 
 % Combined original-vs-replication performance figure
 % (plot_performance_replication). Uncomment / edit any field to override
@@ -140,29 +140,35 @@ fineTune.performance.font.insetCorr = 16;   % r= annotation
 % fineTune.performanceReplication.font.crowdLabel = 12;
 % fineTune.performanceReplication.font.inset = 11;
 
-% 2x1 original / replication performance (shared no-anchor cohort)
- fineTune.performanceOriginalReplication.figure.pixelPosition = [40 550 1000 1000];
+% 2x1 original / replication performance (shared no-anchor cohort).
+% All layout normalized; set_figure_safe auto-detects dual monitors.
+% Defaults: default_performance_original_replication_graphics.
+%
+ fineTune.performanceOriginalReplication.figure.position = [0.05 0.02 0.5 0.836];
+% fineTune.performanceOriginalReplication.figure.dual = '';  % '' auto | leave | single | upDown | leftRight
+% Panel / main axes (normalized [l b w h]):
+ fineTune.performanceOriginalReplication.panel.A = [0.01 0.52 0.98 0.42];
+ fineTune.performanceOriginalReplication.panel.B = [0.01 0.05 0.98 0.42];
+% fineTune.performanceOriginalReplication.mainAxis.position = [0.09 0.14 0.84 0.74];
+% A/B panel labels:
+ fineTune.performanceOriginalReplication.panelLetter.A.position = [0.01 0.965 0.28 0.04];
+ fineTune.performanceOriginalReplication.panelLetter.B.position = [0.01 0.475 0.28 0.04];
+% fineTune.performanceOriginalReplication.panelLetter.A.fontSize = 20;
+% fineTune.performanceOriginalReplication.panelLetter.B.fontSize = 20;
+% fineTune.performanceOriginalReplication.panelLetter.A.str = 'A  Original';
+% fineTune.performanceOriginalReplication.panelLetter.B.str = 'B  Replication';
+% Insets (panel-relative); forceSquare uses on-screen aspect after placement
+% fineTune.performanceOriginalReplication.inset.forceSquare = true;
+ fineTune.performanceOriginalReplication.insetExpertise.position = [0.76 0.48 0.18 0.36];
+ fineTune.performanceOriginalReplication.insetAnchoring.position = [0.50 0.48 0.18 0.36];
+ fineTune.performanceOriginalReplication.font.axis = 18;
+ fineTune.performanceOriginalReplication.font.xlabel = 20;
+ fineTune.performanceOriginalReplication.font.crowdLabel = 16;
+ fineTune.performanceOriginalReplication.font.inset = 16;       % inset tick labels
+ fineTune.performanceOriginalReplication.font.insetLabel = 16;  % inset xlabel / ylabel
+ fineTune.performanceOriginalReplication.font.insetCorr = 16;   % r= annotation
 % fineTune.performanceOriginalReplication.xlim = [0 60];
 % fineTune.performanceOriginalReplication.lineWidth = 4;
-% fineTune.performanceOriginalReplication.ci.originalAlpha = 0.22;
-% fineTune.performanceOriginalReplication.ci.replicationAlpha = 0.22;
-% fineTune.performanceOriginalReplication.color.personAnchored = ...;     % DuskBlue
-% fineTune.performanceOriginalReplication.color.personReplication = ...;  % DuskBlue
-% fineTune.performanceOriginalReplication.color.personNoAnchor = ...;     % Hazelnut
-% fineTune.performanceOriginalReplication.color.modelOriginal = ...;      % Sandstone
-% fineTune.performanceOriginalReplication.color.modelReplication = ...;
-% fineTune.performanceOriginalReplication.color.anchorCrowd = ...;        % LapisBlue
-% fineTune.performanceOriginalReplication.color.fullCrowd = [0 0 0];
-% fineTune.performanceOriginalReplication.color.noAnchorCrowd = ...;      % Hazelnut
-% fineTune.performanceOriginalReplication.line.modelMult = 1.08;
-% fineTune.performanceOriginalReplication.line.anchorMult = 0.96;
-% fineTune.performanceOriginalReplication.line.fullMult = 0.86;
-% fineTune.performanceOriginalReplication.line.noAnchorMult = 0.76;
-% fineTune.performanceOriginalReplication.font.crowdLabel = 13;
-% fineTune.performanceOriginalReplication.insetExpertise.bottomLeft = [0.74 0.48];
-% fineTune.performanceOriginalReplication.insetAnchoring.bottomLeft = [0.50 0.48];
-% fineTune.performanceOriginalReplication.insetWidth = 0.20;
-% fineTune.performanceOriginalReplication.insetHeight = 0.42;
 
 % Single-panel original performance (submission layout)
 % fineTune.performanceOriginal.figure.pixelPosition = [80 80 1200 700];

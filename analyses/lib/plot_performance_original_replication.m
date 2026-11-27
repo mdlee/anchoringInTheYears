@@ -22,18 +22,21 @@ dRep = d;
 load(fullfile(dataDir, 'pantoneColors.mat'), 'pantone');
 
 g = default_performance_original_replication_graphics(pantone);
-if isfield(fineTune, 'performanceOriginalReplication')
-    g = merge_struct_local(g, fineTune.performanceOriginalReplication);
-end
+% Optional global performance font fills unspecified fields only (does not
+% override panel-letter size or anything set under performanceOriginalReplication).
 if isfield(fineTune, 'font') && isfield(fineTune.font, 'performance') ...
         && ~isempty(fineTune.font.performance)
-    g.font.axis = fineTune.font.performance;
-    g.font.xlabel = fineTune.font.performance + 2;
-    g.font.crowdLabel = fineTune.font.performance;
-    g.font.inset = fineTune.font.performance - 2;
-    g.font.insetLabel = fineTune.font.performance - 2;
-    g.font.insetCorr = fineTune.font.performance - 2;
-    g.font.panelLetter = max(fineTune.font.performance + 2, 18);
+    f0 = fineTune.font.performance;
+    g.font = fill_missing_font(g.font, struct( ...
+        'axis', f0, ...
+        'xlabel', f0 + 2, ...
+        'crowdLabel', f0, ...
+        'inset', max(f0 - 2, 8), ...
+        'insetLabel', max(f0 - 2, 8), ...
+        'insetCorr', max(f0 - 2, 8)));
+end
+if isfield(fineTune, 'performanceOriginalReplication')
+    g = merge_struct_local(g, fineTune.performanceOriginalReplication);
 end
 
 Sorig = compute_panel_stats(dOrig, storageDirs, { ...
@@ -61,14 +64,19 @@ else
 end
 
 F = figure; clf;
+dual = '';
+if isfield(g.figure, 'dual') && ~isempty(g.figure.dual)
+    dual = g.figure.dual;
+end
 try
-    set_figure_safe(F, g.figure.position, '');
+    set_figure_safe(F, g.figure.position, dual);
 catch
     set(F, 'units', 'normalized', 'position', g.figure.position, 'color', 'w');
 end
-set(F, 'Units', 'pixels', 'Position', g.figure.pixelPosition, 'PaperPositionMode', 'auto');
+% Aspect for square insets from the actual on-screen window size.
+g.figure.aspectRatio = figure_aspect_ratio(F, g);
 % Painters keeps marker glyphs circular under export (OpenGL can squash them).
-try, set(F, 'renderer', 'painters'); catch, end
+try, set(F, 'Renderer', 'painters'); catch, end
 
 % Replication expertise inset shares original no-anchor points (Hazelnut),
 % matching the histogram / crowd aggregates.
@@ -82,12 +90,8 @@ end
 draw_panel(F, g.panel.A, Sorig, g, xLim, xTick, false);
 draw_panel(F, g.panel.B, Srep, g, xLim, xTick, true);
 
-annotation(F, 'textbox', [g.panelLetter.A.xy 0.28 0.04], ...
-    'String', g.panelLetter.A.str, 'FontSize', g.font.panelLetter, ...
-    'FontWeight', 'bold', 'EdgeColor', 'none', 'VerticalAlignment', 'bottom');
-annotation(F, 'textbox', [g.panelLetter.B.xy 0.28 0.04], ...
-    'String', g.panelLetter.B.str, 'FontSize', g.font.panelLetter, ...
-    'FontWeight', 'bold', 'EdgeColor', 'none', 'VerticalAlignment', 'bottom');
+draw_panel_letter(F, g.panelLetter.A, g);
+draw_panel_letter(F, g.panelLetter.B, g);
 
 outDir = results_dir(repoRoot, 'performance');
 print_figure(outDir, 'allQPerformanceComparison_originalReplication_2x1', printFigures);
@@ -319,7 +323,7 @@ end
 
 
 function draw_expertise_inset(F, panel, S, g, isReplication)
-pos = inset_pos_square_pixels(g, g.insetExpertise.bottomLeft, panel);
+pos = inset_position(g, g.insetExpertise, panel);
 A = axes('Parent', F, 'Units', 'normalized', 'Position', pos);
 hold(A, 'on');
 xHi = max(g.insetExpertise.xlim(2), ceil(max(S.sigmaPlot)));
@@ -347,7 +351,7 @@ for idx2 = 1:numel(S.eExpertise)
         'markeredgecolor', g.insetMarkerEdge, 'Marker', 'o');
 end
 try, Raxes(A, g.insetRaxes.x, g.insetRaxes.y); catch, end
-% Equal data aspect + fixed Position (already square in pixels) → circular markers.
+% Equal data aspect + square Position (via inset.forceSquare) → circular markers.
 set(A, 'Units', 'normalized', 'Position', pos, 'clipping', 'off', ...
     'DataAspectRatio', [1 1 1], 'DataAspectRatioMode', 'manual', ...
     'PlotBoxAspectRatio', [1 1 1], 'PlotBoxAspectRatioMode', 'manual');
@@ -360,7 +364,7 @@ end
 
 
 function draw_anchoring_inset(F, panel, S, g, isReplication)
-pos = inset_pos_square_pixels(g, g.insetAnchoring.bottomLeft, panel);
+pos = inset_position(g, g.insetAnchoring, panel);
 A = axes('Parent', F, 'Units', 'normalized', 'Position', pos);
 hold(A, 'on');
 set(A, 'xlim', g.insetAnchoring.xlim, 'xtick', g.insetAnchoring.xtick, ...
@@ -393,7 +397,30 @@ text(A, g.insetCorr.xFrac, 1, sprintf('r=%.2f', rA(1, 2)), ...
 end
 
 
+function draw_panel_letter(F, letter, g)
+% letter.position = [x y w h] in figure-normalized units; letter.fontSize
+% overrides g.font.panelLetter when set.
+pos = letter.position(:).';
+if numel(pos) == 2
+    pos = [pos(:).' 0.28 0.04];
+end
+fs = g.font.panelLetter;
+if isfield(letter, 'fontSize') && ~isempty(letter.fontSize)
+    fs = letter.fontSize;
+end
+fw = 'normal';
+if isfield(letter, 'fontWeight') && ~isempty(letter.fontWeight)
+    fw = letter.fontWeight;
+end
+annotation(F, 'textbox', pos, ...
+    'String', letter.str, 'FontSize', fs, 'FontWeight', fw, ...
+    'EdgeColor', 'none', 'VerticalAlignment', 'bottom', ...
+    'HorizontalAlignment', 'left', 'Interpreter', 'none');
+end
+
+
 function pos = map_to_panel(rel, panel)
+% Map panel-relative normalized [l b w h] into figure-normalized coords.
 rel = rel(:).';
 panel = panel(:).';
 pos = [panel(1) + panel(3) * rel(1), ...
@@ -403,17 +430,64 @@ pos = [panel(1) + panel(3) * rel(1), ...
 end
 
 
-function pos = inset_pos_square_pixels(g, bottomLeft, panel)
-% Map inset into panel with on-screen width == height (circular markers),
-% without letting axis square relocate the axes box.
+function pos = inset_position(g, inset, panel)
+% Inset placement is fully normalized (no pixel coordinates).
+% Prefer inset.position = [l b w h] relative to the panel.
+% Else use inset.bottomLeft + g.insetWidth / g.insetHeight.
+% If g.inset.forceSquare is true, height is derived from width using
+% g.figure.aspectRatio (width/height) so the axes box is square on screen.
 panel = panel(:).';
-figW = g.figure.pixelPosition(3);
-figH = g.figure.pixelPosition(4);
-panelPxW = panel(3) * figW;
-panelPxH = panel(4) * figH;
-wRel = g.insetWidth;
-hRel = (wRel * panelPxW) / max(panelPxH, eps);
-pos = map_to_panel([bottomLeft(:).' wRel hRel], panel);
+if isfield(inset, 'position') && ~isempty(inset.position) && numel(inset.position) == 4
+    rel = inset.position(:).';
+else
+    bl = inset.bottomLeft(:).';
+    wRel = g.insetWidth;
+    hRel = g.insetHeight;
+    rel = [bl(1) bl(2) wRel hRel];
+end
+forceSquare = isfield(g, 'inset') && isfield(g.inset, 'forceSquare') && g.inset.forceSquare;
+if forceSquare
+    aspect = 1;
+    if isfield(g.figure, 'aspectRatio') && ~isempty(g.figure.aspectRatio)
+        aspect = g.figure.aspectRatio; % figure width / height
+    end
+    % Square in figure-normalized units ⇒ Δx_fig / Δy_fig = aspect.
+    % Δx_fig = panel(3)*wRel, Δy_fig = panel(4)*hRel.
+    wRel = rel(3);
+    hRel = (panel(3) * wRel) / max(panel(4) * aspect, eps);
+    rel(3) = wRel;
+    rel(4) = hRel;
+end
+pos = map_to_panel(rel, panel);
+end
+
+
+function font = fill_missing_font(font, defaults)
+fn = fieldnames(defaults);
+for i = 1:numel(fn)
+    name = fn{i};
+    if ~isfield(font, name) || isempty(font.(name))
+        font.(name) = defaults.(name);
+    end
+end
+end
+
+
+function aspect = figure_aspect_ratio(F, g)
+% Prefer an explicit override; else read the live pixel W/H.
+if isfield(g.figure, 'aspectRatio') && ~isempty(g.figure.aspectRatio)
+    aspect = g.figure.aspectRatio;
+    return;
+end
+aspect = 1;
+try
+    units = get(F, 'Units');
+    set(F, 'Units', 'pixels');
+    pos = get(F, 'Position');
+    set(F, 'Units', units);
+    aspect = pos(3) / max(pos(4), eps);
+catch
+end
 end
 
 
@@ -447,14 +521,32 @@ end
 
 
 function g = default_performance_original_replication_graphics(pantone)
-g.figure.position = [0.05 0.02 0.72*0.95 0.88*0.95];
-g.figure.pixelPosition = [40 40 round(1600*0.95) round(1120*0.95)];
+% Figure window and panel/axis/inset layout are all normalized.
+% set_figure_safe maps figure.position onto dual monitors (auto-detect).
+% Override via fineTune.performanceOriginalReplication in analyses.m.
+
+% Figure: normalized [l b w h]; dual '' = auto ('leave'|'single'|'upDown'|'leftRight').
+g.figure.position = [0.05 0.02 0.684 0.836];
+g.figure.dual = '';
+g.figure.aspectRatio = []; % filled from on-screen size after set_figure_safe
+
+
+
+% Panel regions in figure-normalized coordinates [left bottom width height].
 g.panel.A = [0.01 0.51 0.98 0.47];
 g.panel.B = [0.01 0.02 0.98 0.47];
-g.panelLetter.A.xy = [0.01 0.955];
-g.panelLetter.B.xy = [0.01 0.465];
+
+% A/B labels: figure-normalized textbox + dedicated fontSize.
+g.panelLetter.A.position = [0.01 0.955 0.28 0.04];
+g.panelLetter.B.position = [0.01 0.465 0.28 0.04];
 g.panelLetter.A.str = 'A  Original';
 g.panelLetter.B.str = 'B  Replication';
+g.panelLetter.A.fontSize = 20;
+g.panelLetter.B.fontSize = 20;
+g.panelLetter.A.fontWeight = 'normal';
+g.panelLetter.B.fontWeight = 'normal';
+
+% Main histogram axes relative to each panel [l b w h].
 g.mainAxis.position = [0.09 0.14 0.84 0.74];
 g.xlabel = 'Root Mean Squared Error';
 g.tickLength = [0.01 0];
@@ -505,23 +597,26 @@ g.label.hor = 'left';
 g.font.axis = 15;
 g.font.xlabel = 17;
 g.font.crowdLabel = 14;
-g.font.panelLetter = 20;
+g.font.panelLetter = 20; % fallback if panelLetter.*.fontSize unset
 g.font.inset = 12;
 g.font.insetLabel = 12;
 g.font.insetCorr = 12;
 
-% Insets relative to each panel; height is set for square on-screen pixels.
-g.insetExpertise.bottomLeft = [0.74 0.48];
+% Insets: panel-relative normalized position [l b w h], or bottomLeft+width/height.
+g.inset.forceSquare = true; % use figure.aspectRatio so markers stay circular
+g.insetExpertise.position = [0.74 0.48 0.18 0.36];
+g.insetAnchoring.position = [0.50 0.48 0.18 0.36];
+g.insetExpertise.bottomLeft = [0.74 0.48]; % used only if .position empty
 g.insetAnchoring.bottomLeft = [0.50 0.48];
-g.insetWidth = 0.18; % 10% smaller than 0.20; square pixels keep circular markers
-g.insetHeight = 0.36; % nominal; inset_pos_square_pixels overrides height
+g.insetWidth = 0.18;
+g.insetHeight = 0.36;
 g.insetTickLength = [0.025 0];
 g.insetMarkerSize = 5.5;
 g.insetMarkerEdge = 'k';
 g.insetRaxes.x = 0.01;
 g.insetRaxes.y = 0.01;
 g.insetCorr.xFrac = 0.02;
-g.insetCorr.yFrac = 0; % r= top aligned with max y tick
+g.insetCorr.yFrac = 0;
 g.insetExpertise.xlim = [0 75];
 g.insetExpertise.ylim = [0 75];
 g.insetExpertise.xlabel = 'inferred expertise';

@@ -22,4 +22,12 @@ fineTune.performance.font.crowdLabel = 16;
 fineTune.performance.font.insetAxis = 16;
 fineTune.performance.font.insetLabel = 16;
 fineTune.performance.font.insetCorr = 16;
+
+% 2x1 original/replication WOC figure — empty means use defaults in
+% default_performance_original_replication_graphics.
+%   .figure.position / .dual  — normalized window; dual-monitor auto-detect
+%   .panel.A / .panel.B / .mainAxis.position
+%   .panelLetter.A|B .position .fontSize .str
+%   .insetExpertise.position / .insetAnchoring.position / .inset.forceSquare
+fineTune.performanceOriginalReplication = struct();
 end
